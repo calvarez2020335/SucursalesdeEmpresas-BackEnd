@@ -9,7 +9,6 @@ function agregarEmpleado(req, res) {
     parametros.apellido &&
     parametros.puesto &&
     parametros.departamento
-    
   ) {
     modeloEmpleados.nombre = parametros.nombre;
     modeloEmpleados.apellido = parametros.apellido;
@@ -32,6 +31,8 @@ function agregarEmpleado(req, res) {
       .send({ mensaje: "Debe enviar los parametros solicitados" });
   }
 }
+
+
 
 module.exports = {
     agregarEmpleado
