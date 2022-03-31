@@ -4,6 +4,7 @@ const app = express();
 
 // IMPORTACION RUTAS
 
+const usuarioRutas = require('./src/routes/usuario.routes')
 
 // MIDDLEWARES
 app.use(express.urlencoded({ extended: false}));
@@ -14,6 +15,6 @@ app.use(cors());
 
 // CARGA DE RUTAS localhost:3000/api/productos
 
-//app.use('/api' );
+app.use('/api' , usuarioRutas);
 
 module.exports = app;
