@@ -127,6 +127,8 @@ function EditarEmpresa(req, res) {
   );
 }
 
+
+
 module.exports = {
   registrarAdmin,
   Login,
