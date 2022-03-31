@@ -13,4 +13,5 @@ exports.crearToken = function (usuario) {
     }
 
     return jwt_simple.encode(payload, secret);
+    
 }
