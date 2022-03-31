@@ -9,6 +9,7 @@ function agregarEmpleado(req, res) {
     parametros.apellido &&
     parametros.puesto &&
     parametros.departamento
+    
   ) {
     modeloEmpleados.nombre = parametros.nombre;
     modeloEmpleados.apellido = parametros.apellido;
