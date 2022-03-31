@@ -127,11 +127,31 @@ function EditarEmpresa(req, res) {
   );
 }
 
+function EliminarEmpresas(req, res) {
+    var idUsua = req.params.idUser;
 
+    if( req.user.rol !== "ROL_ADMIN" ) {
+        return res.status(500).send({ mensaje: 'No tiene los permisos para eliminar Empresas.' });
+    }
+    
+    if( req.user.sub == idUsua){
+        console.log(req.user.nombre);
+        return res.status(500).send({ mensaje: 'El admin no se puede borrar' });
+    }
+
+    Usuario.findByIdAndDelete(idUsua, (err, UsuarioEliminado)=>{
+        if(err) return res.status(500).send({ mensaje: 'Error en la peticion' });
+        if(!UsuarioEliminado) return res.status(500)
+            .send({ mensaje: 'Error al eliminar el producto' })
+
+        return res.status(200).send({ usuario: UsuarioEliminado });
+    })
+}
 
 module.exports = {
   registrarAdmin,
   Login,
   RegistrarEmpresa,
   EditarEmpresa,
+  EliminarEmpresas
 };
