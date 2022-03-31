@@ -32,8 +32,15 @@ function agregarEmpleado(req, res) {
   }
 }
 
+function buscarTodosLosEmpleados(req, res){
 
+  Empleados.find({idEmpresa: req.user.sub}, (err, empleadoEncontrado)=>{
+    return res.send({Empleados: empleadoEncontrado})
+  })
+
+}
 
 module.exports = {
-    agregarEmpleado
+    agregarEmpleado,
+    buscarTodosLosEmpleados
 }
