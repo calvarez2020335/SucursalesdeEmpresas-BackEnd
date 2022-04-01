@@ -8,6 +8,6 @@ const md_roles = require('../middlewares/roles');
 const api = express.Router();
 
 api.post('/registrarEmpleado', controladorEmpleados.agregarEmpleado);
-api.get('/Empleados', [md_autenticacion.Auth, md_roles.verEmpresas], controladorEmpleados.buscarTodosLosEmpleados)
+api.get('/Empleados', controladorEmpleados.buscarTodosLosEmpleados)
 
 module.exports = api;
