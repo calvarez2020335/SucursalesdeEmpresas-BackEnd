@@ -14,7 +14,7 @@ function agregarEmpleado(req, res) {
     modeloEmpleados.apellido = parametros.apellido;
     modeloEmpleados.puesto = parametros.puesto;
     modeloEmpleados.departamento = parametros.departamento;
-    modeloEmpleados.idEmpresa = req.user.sub;
+    modeloEmpleados.idEmpresa = parametros.idEmpresa;
 
     modeloEmpleados.save((err, empleadoGuardado) => {
       if (err) return res.status(500).send({ mensaje: "Error en la peticion" });
