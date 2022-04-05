@@ -38,9 +38,28 @@ function agregarSucursales(req, res) {
   }
 }
 
+function eliminarSucursales(req, res) {
+  const sucursalesid = req.params.idSucursal;
 
+  Sucursales.findOne({_id: sucursalesid, idEmpresa: req.user.sub}, (err, sucursalEmpresa)=>{
+
+    if(!sucursalEmpresa){
+      return res.status(401).send({mensaje: "No puede eliminar empleados de otras empresas"})
+    }
+
+    Sucursales.findByIdAndDelete(sucursalesid,(err, sucursalEmpresaEliminado)=>{
+      if(err) return res.status(500).send({mensaje: "Error en la peticion"});
+      if(!sucursalEmpresaEliminado) return res.status(500).send({mensaje: "Error al eliminar al empleado"})
+
+      return res.status(200).send({Sucursal: sucursalEmpresaEliminado})
+    })
+
+  })
+
+}
 
 
 module.exports = {
   agregarSucursales,
+  eliminarSucursales
 };
