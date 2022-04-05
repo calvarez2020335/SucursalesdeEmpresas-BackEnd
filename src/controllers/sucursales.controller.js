@@ -39,8 +39,44 @@ function agregarSucursales(req, res) {
 }
 
 
+function editarSurcursal(req, res) {
+  var idSurcursal = req.params.idSurcursal;
+  var parametros = req.body;
+
+  Sucursales.findOne( { _id: idSurcursal, _idEmpresa: req.user.sub }  , (err, SurcursalEnciontrada) =>{
+
+if(!SurcursalEnciontrada ){
+
+return res.status(500).send({ mensaje: "Esta Surcursal No Te Pertenece" });
+
+} else {
+
+  Sucursales.findByIdAndUpdate(
+    idSurcursal,
+    parametros,
+    { new: true },
+    (err, SurcursalEditada) => {
+      if (err) return res.status(500).send({ mensaje: "Error en la peticion" });
+      if (!SurcursalEditada)
+        return res.status(403).send({ mensaje: "Error al editar la Surcusal" });
+
+      return res.status(200).send({ Surcusal: SurcursalEditada });
+    }
+  );
+}
+
+
+
+
+  })
+
+
+}
+
+
 
 
 module.exports = {
   agregarSucursales,
+  editarSurcursal
 };
