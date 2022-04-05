@@ -12,5 +12,6 @@ api.post('/login', usuarioControlador.Login)
 api.post('/registrarEmpresa',[md_autenticacion.Auth, md_roles.verAdministrador] ,usuarioControlador.RegistrarEmpresa)
 api.put('/editarEmpresa/:idUser', md_autenticacion.Auth ,usuarioControlador.EditarEmpresa)
 api.delete('/eliminarEmpresa/:idUser', md_autenticacion.Auth , usuarioControlador.EliminarEmpresas);
+api.get('/empresas', [md_autenticacion.Auth, md_roles.verAdministrador], usuarioControlador.VerEmpresas)
 
 module.exports = api;
