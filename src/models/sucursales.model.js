@@ -10,4 +10,5 @@ const SucursalesSchema = Schema({
     idEmpresa: {type: Schema.Types.ObjectId, ref: 'Usuarios'}
 });
 
+
 module.exports = mongoose.model('Sucursales', SucursalesSchema);
