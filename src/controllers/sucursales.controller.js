@@ -1,46 +1,19 @@
-const Empleados = require("../models/empleados.model");
+const Sucursales = require("../models/sucursales.model");
 
-function agregarEmpleado(req, res) {
+function agregarSucursales(req, res) {
+
   const parametros = req.body;
-  const modeloEmpleados = new Empleados();
+  const modeloSucursales = new Sucursales();
 
-  if (
-    parametros.nombre &&
-    parametros.apellido &&
-    parametros.puesto &&
-    parametros.departamento
-  ) {
-    modeloEmpleados.nombre = parametros.nombre;
-    modeloEmpleados.apellido = parametros.apellido;
-    modeloEmpleados.puesto = parametros.puesto;
-    modeloEmpleados.departamento = parametros.departamento;
-    modeloEmpleados.idEmpresa = parametros.idEmpresa;
+  if(parametros.nombre && parametros.telefono && parametros.stock && parametros.direccion){
 
-    modeloEmpleados.save((err, empleadoGuardado) => {
-      if (err) return res.status(500).send({ mensaje: "Error en la peticion" });
-      if (!empleadoGuardado)
-        return res
-          .status(500)
-          .send({ mensaje: "Error al agregar el empleado" });
+    modeloSucursales.nombre = parametros.nombre;
+    modeloSucursales.telefono = parametros.telefono;
+    modeloSucursales.direccion = parametros.direccion;
+    modeloSucursales.stock = parametros.stock;
+    modeloSucursales.vendido = parametros.vendido;
+    modeloSucursales.idEmpresa = req.user.sub;
 
-      return res.status(200).send({ empleado: empleadoGuardado });
-    });
-  } else {
-    return res
-      .status(400)
-      .send({ mensaje: "Debe enviar los parametros solicitados" });
   }
-}
 
-function buscarTodosLosEmpleados(req, res){
-
-  Empleados.find({}, (err, empleadoEncontrado)=>{
-    return res.send({Empleados: empleadoEncontrado})
-  })
-
-}
-
-module.exports = {
-    agregarEmpleado,
-    buscarTodosLosEmpleados
 }
