@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const usuarioControler = require('./src/controllers/usuario.controller')
 const app = require('./app');
 const {registrarAdmin} = require('./src/controllers/usuario.controller')
 
