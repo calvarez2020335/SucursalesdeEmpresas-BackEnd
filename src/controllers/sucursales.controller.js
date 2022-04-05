@@ -104,10 +104,23 @@ function editarSurcursal(req, res) {
   );
 }
 
+function verSucursalesEmpresas(req, res) {
+
+  Sucursales.find({idEmpresa: req.user.sub}, (err, sucursalEmpresaEncontrada) => {
+    return res.status(200).send({Sucursales: sucursalEmpresaEncontrada})
+  })
+
+}
+
 module.exports = {
   agregarSucursales,
 
   eliminarSucursales,
 
   editarSurcursal,
+
+
+  verSucursalesEmpresas
+
+
 };

@@ -12,7 +12,7 @@ api.post('/agregarSucursales', [md_autenticacion.Auth, md_roles.verEmpresas], co
 api.delete('/eliminarSucursales/:idSucursal', [md_autenticacion.Auth, md_roles.verEmpresas], controladorSurcusales.eliminarSucursales)
 
 api.put('/editarSurcursal/:idSurcursal', [md_autenticacion.Auth, md_roles.verEmpresas] ,controladorSurcusales.editarSurcursal)
-//api.get('/Empleados', controladorEmpleados.buscarTodosLosEmpleados)
+api.get('/Sucursales', [md_autenticacion.Auth, md_roles.verEmpresas], controladorSurcusales.agregarSucursales)
 
 
 module.exports = api;
