@@ -10,4 +10,9 @@ const EmpleadosSchema = Schema({
     
 });
 
+
 module.exports = mongoose.model('Empleados', EmpleadosSchema);
+
+
+module.exports = mongoose.model('Sucursales', SucursalesSchema);
+

@@ -162,10 +162,17 @@ function EliminarEmpresas(req, res) {
     })
 }
 
+function VerEmpresas(req, res) {
+  Usuario.find({}, (err, UsuarioEncontrado)=>{
+    return res.status(200).send({Empresas: UsuarioEncontrado})
+  })
+}
+
 module.exports = {
   registrarAdmin,
   Login,
   RegistrarEmpresa,
   EditarEmpresa,
-  EliminarEmpresas
+  EliminarEmpresas,
+  VerEmpresas
 };
