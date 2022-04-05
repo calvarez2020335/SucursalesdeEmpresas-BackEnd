@@ -7,7 +7,13 @@ const UsuarioSchema = Schema({
     telefono: Number,
     direccion: String,
     password: String,
-    rol: String
+    rol: String,
+    tipoEmpresa:String,
+    ProductoEmpresa:[{
+        nombreProducto: String,
+        NombreProveedor: String,
+        Stock: String
+    }]
 });
 
 module.exports = mongoose.model('Usuarios', UsuarioSchema);
