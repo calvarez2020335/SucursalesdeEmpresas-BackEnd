@@ -5,12 +5,12 @@ const jwt = require("../services/jwt");
 function registrarAdmin() {
   var modeloUsuario = new Usuario();
 
-  Usuario.find({ email: "admin@gmail.com" }, (err, usuarioEncontrado) => {
+  Usuario.find({ email: "SuperAdmin" }, (err, usuarioEncontrado) => {
     if (usuarioEncontrado.length > 0) {
-      return console.log("Este correo ya se encuentra utilizado.");
+      return console.log("el SuperAdmin Ya Esta Registrado");
     } else {
-      modeloUsuario.nombre = "Admin";
-      modeloUsuario.email = "admin@gmail.com";
+      modeloUsuario.nombre = "SuperAdmin";
+      modeloUsuario.email = "SuperAdmin";
       modeloUsuario.rol = "ROL_ADMIN";
 
       bcrypt.hash("123456", null, null, (err, passwordEncriptada) => {
@@ -19,9 +19,9 @@ function registrarAdmin() {
         modeloUsuario.save((err, usuarioGuardado) => {
           if (err) return console.log("Error en la peticion");
           if (!usuarioGuardado)
-            return console.log("Error al registrar usuario");
+            return console.log("Error al registrar Admin");
 
-          return console.log("usuario:" + " " + usuarioGuardado);
+          return console.log("SuperAdmin:" + " " + usuarioGuardado);
         });
       });
     }
