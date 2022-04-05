@@ -17,26 +17,32 @@ function agregarSucursales(req, res) {
     modeloSucursales.vendido = 0;
     modeloSucursales.idEmpresa = req.user.sub;
 
-    Sucursales.find({ nombre: parametros.nombre }, (err, sucursalEmcontrada) => {
-      if (sucursalEmcontrada.length == 0) {
-        modeloSucursales.save((err, SurcursalGuardada) => {
-          if (err)
-            return res.status(500).send({ mensaje: "Error en la peticion" });
-          if (!SurcursalGuardada)
-            return res
-              .status(500)
-              .send({ mensaje: "Error al agregar Surcusal" });
+    Sucursales.find(
+      { nombre: parametros.nombre , idEmpresa: req.user.sub},
+      (err, sucursalEmcontrada) => {
+        if (sucursalEmcontrada.length == 0) {
+          modeloSucursales.save((err, SurcursalGuardada) => {
+            if (err)
+              return res.status(500).send({ mensaje: "Error en la peticion" });
+            if (!SurcursalGuardada)
+              return res
+                .status(500)
+                .send({ mensaje: "Error al agregar Surcusal" });
 
-          return res.status(200).send({ Surcusal: SurcursalGuardada });
-        });
-      } else {
-        return res.status(500).send({ Surcusal: "La Sucursal ya a sido creada" });
+            return res.status(200).send({ Surcusal: SurcursalGuardada });
+          });
+        } else {
+          return res
+            .status(500)
+            .send({ Surcusal: "La Sucursal ya a sido creada" });
+        }
       }
-    });
+    );
   } else {
     return res.status(500).send({ Surcusal: "enviar parametros obligatorios" });
   }
 }
+
 
 function eliminarSucursales(req, res) {
   const sucursalesid = req.params.idSucursal;
@@ -58,8 +64,44 @@ function eliminarSucursales(req, res) {
 
 }
 
+function editarSurcursal(req, res) {
+  var idSurcursal = req.params.idSurcursal;
+  var parametros = req.body;
+
+  Sucursales.findOne(
+    { _id: idSurcursal, _idEmpresa: req.user.sub },
+    (err, SurcursalEnciontrada) => {
+      if (!SurcursalEnciontrada) {
+        return res
+          .status(500)
+          .send({ mensaje: "Esta Surcursal No Te Pertenece" });
+      } else {
+        Sucursales.findByIdAndUpdate(
+          idSurcursal,
+          parametros,
+          { new: true },
+          (err, SurcursalEditada) => {
+            if (err)
+              return res.status(500).send({ mensaje: "Error en la peticion" });
+            if (!SurcursalEditada)
+              return res
+                .status(403)
+                .send({ mensaje: "Error al editar la Surcusal" });
+
+
+            return res.status(200).send({ Surcusal: SurcursalEditada });
+          }
+        );
+      }
+    }
+  );
+}
 
 module.exports = {
   agregarSucursales,
-  eliminarSucursales
+
+  eliminarSucursales,
+
+  editarSurcursal,
+
 };

@@ -113,6 +113,12 @@ function RegistrarEmpresa(req, res) {
   }
 }
 
+
+
+
+
+
+
 function EditarEmpresa(req, res) {
   var idUser = req.params.idUser;
   var parametros = req.body;
