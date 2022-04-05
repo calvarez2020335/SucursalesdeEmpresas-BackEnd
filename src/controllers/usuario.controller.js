@@ -104,6 +104,8 @@ function RegistrarEmpresa(req, res) {
         return res.status(500).send({ mensaje: "La empresa ya a sido creada" });
       }
     });
+  }else {
+    return res.status(500).send({ mensaje: "Enviar parametros obligatorios" });
   }
 }
 
