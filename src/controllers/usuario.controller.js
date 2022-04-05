@@ -69,13 +69,17 @@ function RegistrarEmpresa(req, res) {
   var parametro = req.body;
   var usuarioModel = new Usuario();
 
-  if (parametro.nombre && parametro.email && parametro.password) {
+
+  if (parametro.nombre && parametro.email && parametro.password && parametro.tipoEmpresa) {
+  
     usuarioModel.nombre = parametro.nombre;
     usuarioModel.email = parametro.email;
     usuarioModel.telefono = parametro.telefono;
     usuarioModel.direccion = parametro.direccion
     usuarioModel.password = parametro.password;
     usuarioModel.rol = "ROL_EMPRESA";
+    usuarioModel.tipoEmpresa = parametro.tipoEmpresa;
+    usuarioModel.ProductoEmpresa = [];
 
     Usuario.find({ email: parametro.email }, (err, usuarioEncontrado) => {
       if (usuarioEncontrado.length == 0) {
@@ -104,6 +108,8 @@ function RegistrarEmpresa(req, res) {
         return res.status(500).send({ mensaje: "La empresa ya a sido creada" });
       }
     });
+  }else {
+    return res.status(500).send({ mensaje: "Enviar parametros obligatorios" });
   }
 }
 
