@@ -43,6 +43,27 @@ function agregarSucursales(req, res) {
   }
 }
 
+
+function eliminarSucursales(req, res) {
+  const sucursalesid = req.params.idSucursal;
+
+  Sucursales.findOne({_id: sucursalesid, idEmpresa: req.user.sub}, (err, sucursalEmpresa)=>{
+
+    if(!sucursalEmpresa){
+      return res.status(401).send({mensaje: "No puede eliminar empleados de otras empresas"})
+    }
+
+    Sucursales.findByIdAndDelete(sucursalesid,(err, sucursalEmpresaEliminado)=>{
+      if(err) return res.status(500).send({mensaje: "Error en la peticion"});
+      if(!sucursalEmpresaEliminado) return res.status(500).send({mensaje: "Error al eliminar al empleado"})
+
+      return res.status(200).send({Sucursal: sucursalEmpresaEliminado})
+    })
+
+  })
+
+}
+
 function editarSurcursal(req, res) {
   var idSurcursal = req.params.idSurcursal;
   var parametros = req.body;
@@ -67,6 +88,7 @@ function editarSurcursal(req, res) {
                 .status(403)
                 .send({ mensaje: "Error al editar la Surcusal" });
 
+
             return res.status(200).send({ Surcusal: SurcursalEditada });
           }
         );
@@ -77,5 +99,9 @@ function editarSurcursal(req, res) {
 
 module.exports = {
   agregarSucursales,
+
+  eliminarSucursales,
+
   editarSurcursal,
+
 };
