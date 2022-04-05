@@ -72,6 +72,8 @@ function RegistrarEmpresa(req, res) {
   if (parametro.nombre && parametro.email && parametro.password) {
     usuarioModel.nombre = parametro.nombre;
     usuarioModel.email = parametro.email;
+    usuarioModel.telefono = parametro.telefono;
+    usuarioModel.direccion = parametro.direccion
     usuarioModel.password = parametro.password;
     usuarioModel.rol = "ROL_EMPRESA";
 
