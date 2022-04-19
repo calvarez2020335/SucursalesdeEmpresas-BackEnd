@@ -14,4 +14,8 @@ api.put('/editarEmpresa/:idUser', md_autenticacion.Auth ,usuarioControlador.Edit
 api.delete('/eliminarEmpresa/:idUser', md_autenticacion.Auth , usuarioControlador.EliminarEmpresas);
 api.get('/empresas', [md_autenticacion.Auth, md_roles.verAdministrador], usuarioControlador.VerEmpresas)
 
+//Agregar Productos
+
+api.post('/AgregarproductosEmpresas', [md_autenticacion.Auth, md_roles.verEmpresas], usuarioControlador.agregarProductosEmpresas)
+
 module.exports = api;

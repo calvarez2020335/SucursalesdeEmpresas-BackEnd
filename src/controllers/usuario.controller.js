@@ -1,4 +1,5 @@
 const Usuario = require("../models/usuario.model");
+const ProductosEmpresas = require("../models/productos.empresas.model");
 const bcrypt = require("bcrypt-nodejs");
 const jwt = require("../services/jwt");
 
@@ -18,8 +19,7 @@ function registrarAdmin() {
 
         modeloUsuario.save((err, usuarioGuardado) => {
           if (err) return console.log("Error en la peticion");
-          if (!usuarioGuardado)
-            return console.log("Error al registrar Admin");
+          if (!usuarioGuardado) return console.log("Error al registrar Admin");
 
           return console.log("SuperAdmin:" + " " + usuarioGuardado);
         });
@@ -69,13 +69,16 @@ function RegistrarEmpresa(req, res) {
   var parametro = req.body;
   var usuarioModel = new Usuario();
 
-
-  if (parametro.nombre && parametro.email && parametro.password && parametro.tipoEmpresa) {
-  
+  if (
+    parametro.nombre &&
+    parametro.email &&
+    parametro.password &&
+    parametro.tipoEmpresa
+  ) {
     usuarioModel.nombre = parametro.nombre;
     usuarioModel.email = parametro.email;
     usuarioModel.telefono = parametro.telefono;
-    usuarioModel.direccion = parametro.direccion
+    usuarioModel.direccion = parametro.direccion;
     usuarioModel.password = parametro.password;
     usuarioModel.rol = "ROL_EMPRESA";
     usuarioModel.tipoEmpresa = parametro.tipoEmpresa;
@@ -108,16 +111,10 @@ function RegistrarEmpresa(req, res) {
         return res.status(500).send({ mensaje: "La empresa ya a sido creada" });
       }
     });
-  }else {
+  } else {
     return res.status(500).send({ mensaje: "Enviar parametros obligatorios" });
   }
 }
-
-
-
-
-
-
 
 function EditarEmpresa(req, res) {
   var idUser = req.params.idUser;
@@ -142,30 +139,73 @@ function EditarEmpresa(req, res) {
 }
 
 function EliminarEmpresas(req, res) {
-    var idUsua = req.params.idUser;
+  var idUsua = req.params.idUser;
 
-    if( req.user.rol !== "ROL_ADMIN" ) {
-        return res.status(500).send({ mensaje: 'No tiene los permisos para eliminar Empresas.' });
-    }
-    
-    if( req.user.sub == idUsua){
-        console.log(req.user.nombre);
-        return res.status(500).send({ mensaje: 'El admin no se puede borrar' });
-    }
+  if (req.user.rol !== "ROL_ADMIN") {
+    return res
+      .status(500)
+      .send({ mensaje: "No tiene los permisos para eliminar Empresas." });
+  }
 
-    Usuario.findByIdAndDelete(idUsua, (err, UsuarioEliminado)=>{
-        if(err) return res.status(500).send({ mensaje: 'Error en la peticion' });
-        if(!UsuarioEliminado) return res.status(500)
-            .send({ mensaje: 'Error al eliminar el producto' })
+  if (req.user.sub == idUsua) {
+    console.log(req.user.nombre);
+    return res.status(500).send({ mensaje: "El admin no se puede borrar" });
+  }
 
-        return res.status(200).send({ usuario: UsuarioEliminado });
-    })
+  Usuario.findByIdAndDelete(idUsua, (err, UsuarioEliminado) => {
+    if (err) return res.status(500).send({ mensaje: "Error en la peticion" });
+    if (!UsuarioEliminado)
+      return res.status(500).send({ mensaje: "Error al eliminar el producto" });
+
+    return res.status(200).send({ usuario: UsuarioEliminado });
+  });
 }
 
 function VerEmpresas(req, res) {
-  Usuario.find({}, (err, UsuarioEncontrado)=>{
-    return res.status(200).send({Empresas: UsuarioEncontrado})
-  })
+  Usuario.find({}, (err, UsuarioEncontrado) => {
+    return res.status(200).send({ Empresas: UsuarioEncontrado });
+  });
+}
+
+function agregarProductosEmpresas(req, res) {
+  var parametro = req.body;
+  var productosEmpresasModel = new ProductosEmpresas();
+
+  if (
+    parametro.NombreProducto &&
+    parametro.NombreProveedor &&
+    parametro.Stock
+  ) {
+    productosEmpresasModel.idEmpresa = req.user.sub;
+    productosEmpresasModel.NombreProducto = parametro.NombreProducto;
+    productosEmpresasModel.NombreProveedor = parametro.NombreProveedor;
+    productosEmpresasModel.Stock = parametro.Stock;
+
+    ProductosEmpresas.find(
+      { NombreProducto: parametro.NombreProducto, idEmpresa: req.user.sub },
+      (err, productoEncontrado) => {
+        if (productoEncontrado.length == 0) {
+          productosEmpresasModel.save((err, productoGuardado) => {
+            if (err)
+              return res.status(500).send({ mensaje: "Error en la peticion" });
+            if (!productoGuardado)
+              return res
+                .status(500)
+                .send({ mensaje: "Error al agregar el producto" });
+            return res.status(200).send({ productos: productoGuardado });
+          });
+        } else {
+          return res
+            .status(500)
+            .send({ Surcusal: "El producto ya a sido creada" });
+        }
+      }
+    );
+  } else {
+    return res
+      .status(406)
+      .send({ mensaje: "Debe enviar los parametro obligatorios" });
+  }
 }
 
 module.exports = {
@@ -174,5 +214,6 @@ module.exports = {
   RegistrarEmpresa,
   EditarEmpresa,
   EliminarEmpresas,
-  VerEmpresas
+  VerEmpresas,
+  agregarProductosEmpresas
 };
