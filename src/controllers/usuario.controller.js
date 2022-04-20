@@ -208,38 +208,71 @@ function agregarProductosEmpresas(req, res) {
   }
 }
 
-function EditarProductosEmpresas(req, res) {
-  var idUser = req.params.idProduc;
-  var parametros = req.body;
-  console.log(req.user.sub);
+function VerProductos(req, res) {
+  ProductosEmpresas.find(
+    { idEmpresa: req.user.sub },
+    (err, productoEncontrado) => {
+      if (err)
+        return res.status(404).send({ mensaje: "Producto no encontrado" });
+      return res.status(200).send({ Productos: productoEncontrado });
+    }
+  );
+}
 
-  ProductosEmpresas.find({ idEmpresa: req.user.sub}, (err, ProductoEmpresasEncontrado) => {
+function EliminarProductosEmpresas(req, res) {
+  const productoEmpresaId = req.params.idProductoEmpresa;
 
-    console.log(ProductoEmpresasEncontrado);
-    if (err) return res.status(500).send({ mensaje: "Error en la peticion" });
-    if (!ProductoEmpresasEncontrado)
-      return res.status(403).send({ mensaje: "Error al editar el Producto De La Empresas" });
+  ProductosEmpresas.findOne(
+    { _id: productoEmpresaId, idEmpresa: req.user.sub },
+    (err, productoEmpresa) => {
+      if (!productoEmpresa)
+        return res
+          .status(400)
+          .send({ mensaje: "No puede eliminar productos de otras empresas" });
 
-    // if (req.user.sub == productoEncontrado) {
+      ProductosEmpresas.findByIdAndDelete(
+        productoEmpresaId,
+        (err, productoEmpresaEliminado) => {
+          if (err)
+            return res.status(500).send({ mensaje: "Error en la peticion" });
+          if (!productoEmpresaEliminado)
+            return res
+              .status(403)
+              .send({ mensaje: "Error al eliminar el producto" });
+          return res
+            .status(200)
+            .send({ productoEliminado: productoEmpresaEliminado });
+        }
+      );
+    }
+  );
+}
 
-    //   return res.status(500).send({ mensaje: "has entrado aqui" });
-    // }
-    ProductosEmpresas.findByIdAndUpdate(
-      idUser,
-      parametros,
-      { new: true },
-      (err, ProductoEmpresasEditado) => {
-        if (err) return res.status(500).send({ mensaje: "Error en la peticion" });
-        if (!ProductoEmpresasEditado)
-          return res.status(403).send({ mensaje: "Error al editar el Producto De La Empresas" });
+function EditarProductoEmpresa(req, res) {
+  const productoEmpresaId = req.params.idProductoEmpresa;
+  const parametros = req.body;
 
-        return res.status(200).send({ ProductosEmpresas: ProductoEmpresasEditado });
-      }
-    );
+  ProductosEmpresas.findOne(
+    { _id: productoEmpresaId, idEmpresa: req.user.sub },
+    (err, productoEmpresa) => {
+      if (!productoEmpresa)
+        return res
+          .status(400)
+          .send({ mensaje: "No puede editar productos de otras empresas" });
 
-  })
+      ProductosEmpresas.findByIdAndUpdate(
+        productoEmpresaId,
+        parametros,
+        { new: true },
+        (err, productoEmpresaEditado) => {
 
-
+          if(err) return res.status(500).send({ mensaje: "Error en la peticion"})
+          if(!productoEmpresaEditado) return res.status(404).send({ mensaje: "Error al editar"})
+          return res.status(200).send({productoEditado: productoEmpresaEditado})
+        }
+      );
+    }
+  );
 }
 
 module.exports = {
@@ -250,5 +283,7 @@ module.exports = {
   EliminarEmpresas,
   VerEmpresas,
   agregarProductosEmpresas,
-  EditarProductosEmpresas
+  VerProductos,
+  EliminarProductosEmpresas,
+  EditarProductoEmpresa
 };

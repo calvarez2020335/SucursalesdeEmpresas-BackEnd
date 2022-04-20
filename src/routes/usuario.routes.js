@@ -17,5 +17,8 @@ api.get('/empresas', [md_autenticacion.Auth, md_roles.verAdministrador], usuario
 //Agregar Productos empresas
 
 api.post('/AgregarproductosEmpresas', [md_autenticacion.Auth, md_roles.verEmpresas], usuarioControlador.agregarProductosEmpresas)
-api.put('/editarProductosEmpresas/:idProduc', [md_autenticacion.Auth, md_roles.verEmpresas], usuarioControlador.EditarProductosEmpresas)
+api.get('/ProductosEmpresa', [md_autenticacion.Auth, md_roles.verEmpresas], usuarioControlador.VerProductos)
+api.delete('/eliminarProductoEmpresa/:idProductoEmpresa', [md_autenticacion.Auth, md_roles.verEmpresas], usuarioControlador.EliminarProductosEmpresas)
+api.put('/EditarProductosEmpresas/:idProductoEmpresa', [md_autenticacion.Auth, md_roles.verEmpresas], usuarioControlador.EditarProductoEmpresa)
+
 module.exports = api;
