@@ -208,6 +208,40 @@ function agregarProductosEmpresas(req, res) {
   }
 }
 
+function EditarProductosEmpresas(req, res) {
+  var idUser = req.params.idProduc;
+  var parametros = req.body;
+  console.log(req.user.sub);
+
+  ProductosEmpresas.find({ idEmpresa: req.user.sub}, (err, ProductoEmpresasEncontrado) => {
+
+    console.log(ProductoEmpresasEncontrado);
+    if (err) return res.status(500).send({ mensaje: "Error en la peticion" });
+    if (!ProductoEmpresasEncontrado)
+      return res.status(403).send({ mensaje: "Error al editar el Producto De La Empresas" });
+
+    // if (req.user.sub == productoEncontrado) {
+
+    //   return res.status(500).send({ mensaje: "has entrado aqui" });
+    // }
+    ProductosEmpresas.findByIdAndUpdate(
+      idUser,
+      parametros,
+      { new: true },
+      (err, ProductoEmpresasEditado) => {
+        if (err) return res.status(500).send({ mensaje: "Error en la peticion" });
+        if (!ProductoEmpresasEditado)
+          return res.status(403).send({ mensaje: "Error al editar el Producto De La Empresas" });
+
+        return res.status(200).send({ ProductosEmpresas: ProductoEmpresasEditado });
+      }
+    );
+
+  })
+
+
+}
+
 module.exports = {
   registrarAdmin,
   Login,
@@ -215,5 +249,6 @@ module.exports = {
   EditarEmpresa,
   EliminarEmpresas,
   VerEmpresas,
-  agregarProductosEmpresas
+  agregarProductosEmpresas,
+  EditarProductosEmpresas
 };
