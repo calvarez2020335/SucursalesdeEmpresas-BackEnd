@@ -208,6 +208,73 @@ function agregarProductosEmpresas(req, res) {
   }
 }
 
+function VerProductos(req, res) {
+  ProductosEmpresas.find(
+    { idEmpresa: req.user.sub },
+    (err, productoEncontrado) => {
+      if (err)
+        return res.status(404).send({ mensaje: "Producto no encontrado" });
+      return res.status(200).send({ Productos: productoEncontrado });
+    }
+  );
+}
+
+function EliminarProductosEmpresas(req, res) {
+  const productoEmpresaId = req.params.idProductoEmpresa;
+
+  ProductosEmpresas.findOne(
+    { _id: productoEmpresaId, idEmpresa: req.user.sub },
+    (err, productoEmpresa) => {
+      if (!productoEmpresa)
+        return res
+          .status(400)
+          .send({ mensaje: "No puede eliminar productos de otras empresas" });
+
+      ProductosEmpresas.findByIdAndDelete(
+        productoEmpresaId,
+        (err, productoEmpresaEliminado) => {
+          if (err)
+            return res.status(500).send({ mensaje: "Error en la peticion" });
+          if (!productoEmpresaEliminado)
+            return res
+              .status(403)
+              .send({ mensaje: "Error al eliminar el producto" });
+          return res
+            .status(200)
+            .send({ productoEliminado: productoEmpresaEliminado });
+        }
+      );
+    }
+  );
+}
+
+function EditarProductoEmpresa(req, res) {
+  const productoEmpresaId = req.params.idProductoEmpresa;
+  const parametros = req.body;
+
+  ProductosEmpresas.findOne(
+    { _id: productoEmpresaId, idEmpresa: req.user.sub },
+    (err, productoEmpresa) => {
+      if (!productoEmpresa)
+        return res
+          .status(400)
+          .send({ mensaje: "No puede editar productos de otras empresas" });
+
+      ProductosEmpresas.findByIdAndUpdate(
+        productoEmpresaId,
+        parametros,
+        { new: true },
+        (err, productoEmpresaEditado) => {
+
+          if(err) return res.status(500).send({ mensaje: "Error en la peticion"})
+          if(!productoEmpresaEditado) return res.status(404).send({ mensaje: "Error al editar"})
+          return res.status(200).send({productoEditado: productoEmpresaEditado})
+        }
+      );
+    }
+  );
+}
+
 module.exports = {
   registrarAdmin,
   Login,
@@ -215,5 +282,8 @@ module.exports = {
   EditarEmpresa,
   EliminarEmpresas,
   VerEmpresas,
-  agregarProductosEmpresas
+  agregarProductosEmpresas,
+  VerProductos,
+  EliminarProductosEmpresas,
+  EditarProductoEmpresa
 };
