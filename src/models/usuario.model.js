@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const UsuarioSchema = Schema({
@@ -11,4 +11,4 @@ const UsuarioSchema = Schema({
     tipoEmpresa:String
 });
 
-module.exports = mongoose.model('Usuarios', UsuarioSchema);
+module.exports = mongoose.model("Usuarios", UsuarioSchema);
