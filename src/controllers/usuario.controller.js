@@ -1,4 +1,5 @@
 const Usuario = require("../models/usuario.model");
+const ProductosEmpresas = require("../models/productos.empresas.model");
 const bcrypt = require("bcrypt-nodejs");
 const jwt = require("../services/jwt");
 
@@ -166,6 +167,47 @@ function VerEmpresas(req, res) {
   });
 }
 
+function agregarProductosEmpresas(req, res) {
+  var parametro = req.body;
+  var productosEmpresasModel = new ProductosEmpresas();
+
+  if (
+    parametro.NombreProducto &&
+    parametro.NombreProveedor &&
+    parametro.Stock
+  ) {
+    productosEmpresasModel.idEmpresa = req.user.sub;
+    productosEmpresasModel.NombreProducto = parametro.NombreProducto;
+    productosEmpresasModel.NombreProveedor = parametro.NombreProveedor;
+    productosEmpresasModel.Stock = parametro.Stock;
+
+    ProductosEmpresas.find(
+      { NombreProducto: parametro.NombreProducto, idEmpresa: req.user.sub },
+      (err, productoEncontrado) => {
+        if (productoEncontrado.length == 0) {
+          productosEmpresasModel.save((err, productoGuardado) => {
+            if (err)
+              return res.status(500).send({ mensaje: "Error en la peticion" });
+            if (!productoGuardado)
+              return res
+                .status(500)
+                .send({ mensaje: "Error al agregar el producto" });
+            return res.status(200).send({ productos: productoGuardado });
+          });
+        } else {
+          return res
+            .status(500)
+            .send({ Surcusal: "El producto ya a sido creada" });
+        }
+      }
+    );
+  } else {
+    return res
+      .status(406)
+      .send({ mensaje: "Debe enviar los parametro obligatorios" });
+  }
+}
+
 module.exports = {
   registrarAdmin,
   Login,
@@ -173,4 +215,5 @@ module.exports = {
   EditarEmpresa,
   EliminarEmpresas,
   VerEmpresas,
+  agregarProductosEmpresas
 };
