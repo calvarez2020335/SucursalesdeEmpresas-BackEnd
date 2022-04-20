@@ -15,4 +15,8 @@ api.put('/editarSurcursal/:idSurcursal', [md_autenticacion.Auth, md_roles.verEmp
 api.get('/Sucursales', [md_autenticacion.Auth, md_roles.verEmpresas], controladorSurcusales.verSucursalesEmpresas)
 
 
+//productos surcursales 
+api.post('/ProductosEmpresas', [md_autenticacion.Auth, md_roles.verEmpresas], controladorSurcusales.agregarProductosSurcursales)
+
+
 module.exports = api;
