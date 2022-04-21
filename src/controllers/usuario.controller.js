@@ -221,10 +221,10 @@ function VerProductos(req, res) {
 
 function VerProductosId(req, res) {
 
-  var productoId = req.params.idProducto;
+  const idProducto = req.params.idProducto;
 
-  ProductosEmpresas.findOne(
-    {_id: productoId, idEmpresa: req.user.sub },
+  ProductosEmpresas.findById(
+    {_id: idProducto, idEmpresa: req.user.sub },
     (err, productoEncontrado) => {
       if (err)
         return res.status(404).send({ mensaje: "Producto no encontrado" });

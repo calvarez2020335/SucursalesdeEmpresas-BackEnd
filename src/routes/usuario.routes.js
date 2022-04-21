@@ -20,6 +20,6 @@ api.post('/AgregarproductosEmpresas', [md_autenticacion.Auth, md_roles.verEmpres
 api.get('/ProductosEmpresa', [md_autenticacion.Auth, md_roles.verEmpresas], usuarioControlador.VerProductos)
 api.delete('/eliminarProductoEmpresa/:idProductoEmpresa', [md_autenticacion.Auth, md_roles.verEmpresas], usuarioControlador.EliminarProductosEmpresas)
 api.put('/EditarProductosEmpresas/:idProductoEmpresa', [md_autenticacion.Auth, md_roles.verEmpresas], usuarioControlador.EditarProductoEmpresa)
-api.get('/ProductoId/:productoId', [md_autenticacion.Auth, md_roles.verEmpresas], usuarioControlador.VerProductosId)
+api.get('/ProductoId/:idProducto', [md_autenticacion.Auth, md_roles.verEmpresas], usuarioControlador.VerProductosId)
 
 module.exports = api;
