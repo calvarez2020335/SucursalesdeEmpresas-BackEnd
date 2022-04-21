@@ -220,18 +220,16 @@ function VerProductos(req, res) {
 }
 
 function VerProductosId(req, res) {
-
   const idProducto = req.params.idProducto;
 
   ProductosEmpresas.findById(
-    {_id: idProducto, idEmpresa: req.user.sub },
+    { _id: idProducto, idEmpresa: req.user.sub },
     (err, productoEncontrado) => {
       if (err)
         return res.status(404).send({ mensaje: "Producto no encontrado" });
       return res.status(200).send({ Productos: productoEncontrado });
     }
   );
-
 }
 
 function EliminarProductosEmpresas(req, res) {
@@ -267,33 +265,41 @@ function EditarProductoEmpresa(req, res) {
   const productoEmpresaId = req.params.idProductoEmpresa;
   const parametros = req.body;
 
-  ProductosEmpresas.findOne(
-    { _id: productoEmpresaId, idEmpresa: req.user.sub },
-    (err, productoEmpresa) => {
-      if (!productoEmpresa)
-        return res
-          .status(400)
-          .send({ mensaje: "No puede editar productos de otras empresas" });
+  if (
+    parametros.NombreProducto &&
+    parametros.NombreProveedor &&
+    parametros.Stock
+  ) {
+    ProductosEmpresas.findOne(
+      { _id: productoEmpresaId, idEmpresa: req.user.sub },
+      (err, productoEmpresa) => {
+        if (!productoEmpresa)
+          return res
+            .status(400)
+            .send({ mensaje: "No puede editar productos de otras empresas" });
 
-      ProductosEmpresas.findByIdAndUpdate(
-        productoEmpresaId,
-        parametros,
-        { new: true },
-        (err, productoEmpresaEditado) => {
-
-          if(err) return res.status(500).send({ mensaje: "Error en la peticion"})
-          if(!productoEmpresaEditado) return res.status(404).send({ mensaje: "Error al editar"})
-          return res.status(200).send({productoEditado: productoEmpresaEditado})
-        }
-      );
-    }
-  );
+        ProductosEmpresas.findByIdAndUpdate(
+          productoEmpresaId,
+          parametros,
+          { new: true },
+          (err, productoEmpresaEditado) => {
+            if (err)
+              return res.status(500).send({ mensaje: "Error en la peticion" });
+            if (!productoEmpresaEditado)
+              return res.status(404).send({ mensaje: "Error al editar" });
+            return res
+              .status(200)
+              .send({ productoEditado: productoEmpresaEditado });
+          }
+        );
+      }
+    );
+  }else{
+    return res.status(404).send({ mensaje: "Debe enviar parametros obligatorios" });
+  }
 }
 
-function OrdenarStockMayor(req, res) {
-
-  
-}
+function OrdenarStockMayor(req, res) {}
 
 module.exports = {
   registrarAdmin,
@@ -306,5 +312,5 @@ module.exports = {
   VerProductos,
   EliminarProductosEmpresas,
   EditarProductoEmpresa,
-  VerProductosId
+  VerProductosId,
 };
