@@ -5,8 +5,6 @@ const SucursalesSchema = Schema({
   nombre: String,
   telefono: String,
   direccion: String,
-  stock: Number,
-  vendido: Number,
   idEmpresa: { type: Schema.Types.ObjectId, ref: "Usuarios" },
 });
 

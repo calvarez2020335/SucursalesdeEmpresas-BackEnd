@@ -16,7 +16,7 @@ api.get('/Sucursales', [md_autenticacion.Auth, md_roles.verEmpresas], controlado
 
 
 //productos surcursales 
-api.post('/ProductosEmpresas', [md_autenticacion.Auth, md_roles.verEmpresas], controladorSurcusales.agregarProductosSurcursales)
+api.post('/ProductosSurcursales', [md_autenticacion.Auth, md_roles.verEmpresas], controladorSurcusales.agregarProductosSurcursales)
 
 
 module.exports = api;
