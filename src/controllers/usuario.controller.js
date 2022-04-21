@@ -275,6 +275,11 @@ function EditarProductoEmpresa(req, res) {
   );
 }
 
+function OrdenarStockMayor(req, res) {
+
+  
+}
+
 module.exports = {
   registrarAdmin,
   Login,
