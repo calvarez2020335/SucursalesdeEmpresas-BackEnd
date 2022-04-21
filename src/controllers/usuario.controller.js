@@ -219,6 +219,21 @@ function VerProductos(req, res) {
   );
 }
 
+function VerProductosId(req, res) {
+
+  var productoId = req.params.idProducto;
+
+  ProductosEmpresas.findOne(
+    {_id: productoId, idEmpresa: req.user.sub },
+    (err, productoEncontrado) => {
+      if (err)
+        return res.status(404).send({ mensaje: "Producto no encontrado" });
+      return res.status(200).send({ Productos: productoEncontrado });
+    }
+  );
+
+}
+
 function EliminarProductosEmpresas(req, res) {
   const productoEmpresaId = req.params.idProductoEmpresa;
 
@@ -290,5 +305,6 @@ module.exports = {
   agregarProductosEmpresas,
   VerProductos,
   EliminarProductosEmpresas,
-  EditarProductoEmpresa
+  EditarProductoEmpresa,
+  VerProductosId
 };
