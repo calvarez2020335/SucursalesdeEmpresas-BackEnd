@@ -190,7 +190,7 @@ function agregarProductosSurcursales(req, res) {
 function verSucursalesId(req, res){
 
   const idSucursal = req.params.idSucursal;
-  Sucursales.findOne({_id: idSucursal, idEmpresa: req.user.sub}, (err, sucursalId) => {
+  Sucursales.findById({_id: idSucursal, idEmpresa: req.user.sub}, (err, sucursalId) => {
     return res.status(200).send({ Sucursal: sucursalId });
   })
 
