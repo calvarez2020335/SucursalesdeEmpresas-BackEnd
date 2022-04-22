@@ -299,7 +299,31 @@ function EditarProductoEmpresa(req, res) {
   }
 }
 
-function OrdenarStockMayor(req, res) {}
+function OrdenarStockMayor(req, res) {
+
+  ProductosEmpresas.find(
+    { idEmpresa: req.user.sub },
+    (err, productoEncontrado) => {
+      if (err)
+        return res.status(404).send({ mensaje: "Producto no encontrado" });
+      return res.status(200).send({ Productos: productoEncontrado });
+    }
+  ).sort({Stock: -1})
+
+}
+
+function OrdenarStockMenor(req, res) {
+
+  ProductosEmpresas.find(
+    { idEmpresa: req.user.sub },
+    (err, productoEncontrado) => {
+      if (err)
+        return res.status(404).send({ mensaje: "Producto no encontrado" });
+      return res.status(200).send({ Productos: productoEncontrado });
+    }
+  ).sort({Stock: 1})
+
+}
 
 module.exports = {
   registrarAdmin,
@@ -313,4 +337,6 @@ module.exports = {
   EliminarProductosEmpresas,
   EditarProductoEmpresa,
   VerProductosId,
+  OrdenarStockMayor,
+  OrdenarStockMenor
 };

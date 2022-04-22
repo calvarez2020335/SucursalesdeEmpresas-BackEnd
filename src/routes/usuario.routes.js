@@ -21,5 +21,7 @@ api.get('/ProductosEmpresa', [md_autenticacion.Auth, md_roles.verEmpresas], usua
 api.delete('/eliminarProductoEmpresa/:idProductoEmpresa', [md_autenticacion.Auth, md_roles.verEmpresas], usuarioControlador.EliminarProductosEmpresas)
 api.put('/EditarProductosEmpresas/:idProductoEmpresa', [md_autenticacion.Auth, md_roles.verEmpresas], usuarioControlador.EditarProductoEmpresa)
 api.get('/ProductoId/:idProducto', [md_autenticacion.Auth, md_roles.verEmpresas], usuarioControlador.VerProductosId)
+api.get('/OrdenarStockMayor', [md_autenticacion.Auth, md_roles.verEmpresas], usuarioControlador.OrdenarStockMayor)
+api.get('/OrdenarStockMenor', [md_autenticacion.Auth, md_roles.verEmpresas], usuarioControlador.OrdenarStockMenor)
 
 module.exports = api;
