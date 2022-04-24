@@ -17,6 +17,6 @@ api.get('/SucursalesId/:idSucursal', [md_autenticacion.Auth, md_roles.verEmpresa
 
 //productos surcursales 
 api.post('/ProductosSurcursales', [md_autenticacion.Auth, md_roles.verEmpresas], controladorSurcusales.agregarProductosSurcursales)
-
+api.put('/VentaSimuladaSurcursal/:idSurcursal', [md_autenticacion.Auth, md_roles.verEmpresas] ,controladorSurcusales.VentaSimuladaSurcursales)
 
 module.exports = api;
