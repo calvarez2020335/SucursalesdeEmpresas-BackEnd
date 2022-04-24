@@ -131,7 +131,7 @@ function agregarProductosSurcursales(req, res) {
         if (err) return res.status(404).send({ mensaje: "Producto no encontrado" });
 
 
-        ProductoSurcursales.findOne({ NombreProductoSucursal: parametros.NombreProducto, idSurcursal: sucursalEmpresaEncontrada.id }, (err, ProductoSurcursalesEncontrada) => {      
+        ProductoSurcursales.findOne({ NombreProductoSucursal: parametros.NombreProducto, idSurcursal: sucursalEmpresaEncontrada.id }, (err, ProductoSurcursalesEncontrada) => {
           if (err) return res.status(404).send({ mensaje: "producto no encontrada surcursales" });
 
           if (parametros.StockEnviar <= 0) {
@@ -187,10 +187,62 @@ function agregarProductosSurcursales(req, res) {
 
 }
 
-function verSucursalesId(req, res){
+function VentaSimuladaSurcursales(req, res) {
+  const parametros = req.body;
+  const idSurcu = req.params.idSurcursal
+
+  if (
+    parametros.NombreProductoSurcur && parametros.StockVender
+  ) {
+
+    Sucursales.findOne({ id_: idSurcu, idEmpresa: req.user.sub }, (err, sucursalEmpresaEncontrada) => {
+      if (!sucursalEmpresaEncontrada) return res.status(404).send({ mensaje: "surcursal no encontrada" });
+      if (err) return res.status(404).send({ mensaje: "surcursal no encontrada" });
+
+      ProductoSurcursales.findOne({ NombreProductoSucursal: parametros.NombreProductoSurcur, idSurcursal: sucursalEmpresaEncontrada.id }, (err, ProductoSurcursalesEncontrada) => {
+        if (err) return res.status(404).send({ mensaje: "producto no encontrada surcursales" });
+
+        if (parametros.StockVender <= 0) {
+          return res.status(404).send({ mensaje: "formato incorrecto" });
+        }
+
+        if (parametros.StockVender > ProductoSurcursalesEncontrada.StockSurcursal) {
+          return res.status(404).send({ mensaje: "no hay stock " });
+        }
+
+        const data = {
+          StockSurcursal: ProductoSurcursalesEncontrada.StockSurcursal,
+          CantidadVendida: ProductoSurcursalesEncontrada.CantidadVendida
+        }
+        data.StockSurcursal = ProductoSurcursalesEncontrada.StockSurcursal - parametros.StockVender
+        data.CantidadVendida = parseFloat(data.CantidadVendida)  + parseFloat(parametros.StockVender) 
+
+        if (ProductoSurcursalesEncontrada == null) {
+          return res.status(404).send({ mensaje: "producto no encontrada en surcursales" });
+
+        } else {
+
+          ProductoSurcursales.findByIdAndUpdate({ _id: ProductoSurcursalesEncontrada.id }, data, { new: true }, (err, StockModificado) => {
+            if (!StockModificado) return res.status(404).send({ mensaje: "Producto no encontrado" });
+            if (err) return res.status(404).send({ mensaje: "Producto no encontrado" });
+
+            return res.status(404).send({ productoafectado: StockModificado });
+          })
+        }
+      })
+
+    })
+
+  } else {
+    return res.status(500).send({ Surcusal: "enviar parametros obligatorios" });
+  }
+
+}
+
+function verSucursalesId(req, res) {
 
   const idSucursal = req.params.idSucursal;
-  Sucursales.findById({_id: idSucursal, idEmpresa: req.user.sub}, (err, sucursalId) => {
+  Sucursales.findById({ _id: idSucursal, idEmpresa: req.user.sub }, (err, sucursalId) => {
     return res.status(200).send({ Sucursal: sucursalId });
   })
 
@@ -206,7 +258,8 @@ module.exports = {
   verSucursalesId,
 
   verSucursalesEmpresas,
-  agregarProductosSurcursales
+  agregarProductosSurcursales,
+  VentaSimuladaSurcursales
 
 
 };
