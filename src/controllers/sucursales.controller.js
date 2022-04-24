@@ -248,7 +248,45 @@ function verSucursalesId(req, res) {
 
 }
 
+function OrdenarStockSurcursaleskMayor(req, res) {
 
+  ProductoSurcursales.find(
+    { idEmpresa: req.user.sub },
+    (err, productoEncontrado) => {
+      if (err)
+        return res.status(404).send({ mensaje: "Producto no encontrado" });
+      return res.status(200).send({ Productos: productoEncontrado });
+    }
+  ).sort({StockSurcursal: -1})
+
+}
+
+
+function OrdenarStockSurcursaleskMenor(req, res) {
+
+  ProductoSurcursales.find(
+    { idEmpresa: req.user.sub },
+    (err, productoEncontrado) => {
+      if (err)
+        return res.status(404).send({ mensaje: "Producto no encontrado" });
+      return res.status(200).send({ Productos: productoEncontrado });
+    }
+  ).sort({StockSurcursal: 1})
+
+}
+
+function ElMasVendidoProductos(req, res) {
+
+  ProductoSurcursales.find(
+    { idEmpresa: req.user.sub },
+    (err, productoEncontrado) => {
+      if (err)
+        return res.status(404).send({ mensaje: "Producto no encontrado" });
+      return res.status(200).send({ Productos: productoEncontrado });
+    }
+  ).sort({CantidadVendida: -1})
+
+}
 module.exports = {
   agregarSucursales,
 
@@ -259,7 +297,10 @@ module.exports = {
 
   verSucursalesEmpresas,
   agregarProductosSurcursales,
-  VentaSimuladaSurcursales
+  VentaSimuladaSurcursales,
+  OrdenarStockSurcursaleskMayor ,
+  ElMasVendidoProductos,
+  OrdenarStockSurcursaleskMenor
 
 
 };
