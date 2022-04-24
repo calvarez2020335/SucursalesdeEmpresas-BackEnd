@@ -201,7 +201,7 @@ function agregarProductosSurcursales(req, res) {
 function VerProductosPorSucursales(req, res) {
   var idSurcursal = req.params.idSurcursal;
   ProductoSurcursales.find(
-    {_id: idSurcursal ,idEmpresa: req.user.sub },
+    {idSurcursal: idSurcursal ,idEmpresa: req.user.sub },
     (err, productoEncontrado) => {
       if (err)
         return res.status(404).send({ mensaje: "Producto no encontrado" });
