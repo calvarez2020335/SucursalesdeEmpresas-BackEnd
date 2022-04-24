@@ -103,6 +103,7 @@ function editarSurcursal(req, res) {
     }
   );
 }
+//Buscar todas las sucursales
 
 function verSucursalesEmpresas(req, res) {
 
@@ -112,7 +113,17 @@ function verSucursalesEmpresas(req, res) {
 
 }
 
+//Se usa para poder editar la sucursal
+function verSucursalesId(req, res) {
 
+  const idSucursal = req.params.idSucursal;
+  Sucursales.findById({ _id: idSucursal, idEmpresa: req.user.sub }, (err, sucursalId) => {
+    return res.status(200).send({ Sucursal: sucursalId });
+  })
+
+}
+
+//Produtos Por Sucursales ---------------------------------------------------------------------
 
 function agregarProductosSurcursales(req, res) {
   const parametros = req.body;
@@ -187,6 +198,18 @@ function agregarProductosSurcursales(req, res) {
 
 }
 
+function VerProductosPorSucursales(req, res) {
+  var idSurcursal = req.params.idSurcursal;
+  ProductoSurcursales.find(
+    {_id: idSurcursal ,idEmpresa: req.user.sub },
+    (err, productoEncontrado) => {
+      if (err)
+        return res.status(404).send({ mensaje: "Producto no encontrado" });
+      return res.status(200).send({ Productos: productoEncontrado });
+    }
+  )
+}
+
 function VentaSimuladaSurcursales(req, res) {
   const parametros = req.body;
   const idSurcu = req.params.idSurcursal
@@ -239,15 +262,6 @@ function VentaSimuladaSurcursales(req, res) {
 
 }
 
-function verSucursalesId(req, res) {
-
-  const idSucursal = req.params.idSucursal;
-  Sucursales.findById({ _id: idSucursal, idEmpresa: req.user.sub }, (err, sucursalId) => {
-    return res.status(200).send({ Sucursal: sucursalId });
-  })
-
-}
-
 function OrdenarStockSurcursaleskMayor(req, res) {
 
   ProductoSurcursales.find(
@@ -260,7 +274,6 @@ function OrdenarStockSurcursaleskMayor(req, res) {
   ).sort({StockSurcursal: -1})
 
 }
-
 
 function OrdenarStockSurcursaleskMenor(req, res) {
 
@@ -289,14 +302,13 @@ function ElMasVendidoProductos(req, res) {
 }
 module.exports = {
   agregarSucursales,
-
   eliminarSucursales,
-
   editarSurcursal,
   verSucursalesId,
-
   verSucursalesEmpresas,
+
   agregarProductosSurcursales,
+  VerProductosPorSucursales,
   VentaSimuladaSurcursales,
   OrdenarStockSurcursaleskMayor ,
   ElMasVendidoProductos,
