@@ -2,7 +2,6 @@ const Sucursales = require("../models/sucursales.model");
 const ProductoSurcursales = require("../models/productos.surcursales.model");
 const ProductosEmpresas = require("../models/productos.empresas.model");
 
-
 function agregarSucursales(req, res) {
   const parametros = req.body;
   const modeloSucursales = new Sucursales();
@@ -218,7 +217,7 @@ function VentaSimuladaSurcursales(req, res) {
     parametros.NombreProductoSurcur && parametros.StockVender
   ) {
 
-    Sucursales.findOne({ id_: idSurcu, idEmpresa: req.user.sub }, (err, sucursalEmpresaEncontrada) => {
+    Sucursales.findOne({ _id: idSurcu, idEmpresa: req.user.sub }, (err, sucursalEmpresaEncontrada) => {
       if (!sucursalEmpresaEncontrada) return res.status(404).send({ mensaje: "surcursal no encontrada" });
       if (err) return res.status(404).send({ mensaje: "surcursal no encontrada" });
 
@@ -263,9 +262,10 @@ function VentaSimuladaSurcursales(req, res) {
 }
 
 function OrdenarStockSurcursaleskMayor(req, res) {
+  const idSurcu = req.params.idSurcursal
 
   ProductoSurcursales.find(
-    { idEmpresa: req.user.sub },
+    { idSurcursal: idSurcu, idEmpresa: req.user.sub },
     (err, productoEncontrado) => {
       if (err)
         return res.status(404).send({ mensaje: "Producto no encontrado" });
@@ -276,9 +276,9 @@ function OrdenarStockSurcursaleskMayor(req, res) {
 }
 
 function OrdenarStockSurcursaleskMenor(req, res) {
-
+  const idSurcu = req.params.idSurcursal
   ProductoSurcursales.find(
-    { idEmpresa: req.user.sub },
+    { idSurcursal: idSurcu, idEmpresa: req.user.sub },
     (err, productoEncontrado) => {
       if (err)
         return res.status(404).send({ mensaje: "Producto no encontrado" });
@@ -289,9 +289,9 @@ function OrdenarStockSurcursaleskMenor(req, res) {
 }
 
 function ElMasVendidoProductos(req, res) {
-
+  const idSurcu = req.params.idSurcursal
   ProductoSurcursales.find(
-    { idEmpresa: req.user.sub },
+    {idSurcursal: idSurcu, idEmpresa: req.user.sub },
     (err, productoEncontrado) => {
       if (err)
         return res.status(404).send({ mensaje: "Producto no encontrado" });

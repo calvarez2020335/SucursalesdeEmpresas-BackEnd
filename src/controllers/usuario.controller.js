@@ -167,6 +167,33 @@ function VerEmpresas(req, res) {
   });
 }
 
+function EmpresaId(req, res){
+  const idUser = req.params.idUser;
+
+
+
+  Usuario.findById({_id: idUser, idEmpresa: req.user.sub}, (err, EmpresaEncontrada)=>{
+
+    if( EmpresaEncontrada.id == req.user.sub ){
+
+      
+    if (err) return res.status(404).send({ mensaje: "Empresa no encontrado" });
+    if(!EmpresaEncontrada) return res.status(404).send({ mensaje: "Empresa no encontrado" });
+    return res.status(200).send({ Empresa:  EmpresaEncontrada});
+    } else {
+      return res.status(500).send({ Mensaje: "No puedes ver otras empresas"});
+    }
+
+  })
+
+
+
+
+  
+}
+
+//Productos
+
 function agregarProductosEmpresas(req, res) {
   var parametro = req.body;
   var productosEmpresasModel = new ProductosEmpresas();
@@ -332,6 +359,7 @@ module.exports = {
   EditarEmpresa,
   EliminarEmpresas,
   VerEmpresas,
+  EmpresaId,
   agregarProductosEmpresas,
   VerProductos,
   EliminarProductosEmpresas,
