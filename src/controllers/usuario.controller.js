@@ -116,6 +116,7 @@ function RegistrarEmpresa(req, res) {
   }
 }
 
+//Falta arreglar este
 function EditarEmpresa(req, res) {
   var idUser = req.params.idUser;
   var parametros = req.body;
@@ -138,6 +139,7 @@ function EditarEmpresa(req, res) {
   );
 }
 
+//Falta este tambien
 function EliminarEmpresas(req, res) {
   var idUsua = req.params.idUser;
 
@@ -161,11 +163,13 @@ function EliminarEmpresas(req, res) {
   });
 }
 
+
 function VerEmpresas(req, res) {
   Usuario.find({}, (err, UsuarioEncontrado) => {
     return res.status(200).send({ Empresas: UsuarioEncontrado });
   });
 }
+
 
 function agregarProductosEmpresas(req, res) {
   var parametro = req.body;
@@ -208,6 +212,7 @@ function agregarProductosEmpresas(req, res) {
   }
 }
 
+//Tambien aqui
 function VerProductos(req, res) {
   ProductosEmpresas.find(
     { idEmpresa: req.user.sub },
