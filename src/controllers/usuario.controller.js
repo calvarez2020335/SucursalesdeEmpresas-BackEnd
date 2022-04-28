@@ -82,7 +82,6 @@ function RegistrarEmpresa(req, res) {
     usuarioModel.password = parametro.password;
     usuarioModel.rol = "ROL_EMPRESA";
     usuarioModel.tipoEmpresa = parametro.tipoEmpresa;
-    usuarioModel.ProductoEmpresa = [];
 
     Usuario.find({ email: parametro.email }, (err, usuarioEncontrado) => {
       if (usuarioEncontrado.length == 0) {
