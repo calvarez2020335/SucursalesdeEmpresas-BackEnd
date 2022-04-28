@@ -206,10 +206,13 @@ function VerProductosPorSucursales(req, res) {
   var idSurcursal = req.params.idSurcursal;
   ProductoSurcursales.find(
     {idSurcursal: idSurcursal ,idEmpresa: req.user.sub },
-    (err, productoEncontrado) => {
+    (err, productoEncontrado) => 
+    {
+      if (!productoEncontrado)
+        return res.status(404).send({ mensaje: "Productossssss No hallados" });
       if (err)
         return res.status(404).send({ mensaje: "Producto no encontrado" });
-        if(!productoEncontrado) return res.status(404).send({ mensaje: "Productossssss No hallados"})
+        console.log(productoEncontrado)
       return res.status(200).send({ Productos: productoEncontrado });
     }
   )
