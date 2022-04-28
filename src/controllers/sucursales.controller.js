@@ -126,14 +126,13 @@ function verSucursalesId(req, res) {
 
 function agregarProductosSurcursales(req, res) {
   const parametros = req.body;
-  const idSurcursal = req.params.idSurcursal;
   const modeloProductosSurcursales = new ProductoSurcursales();
 
   if (
-    parametros.NombreProducto && parametros.StockEnviar
+    parametros.NombreProducto && parametros.nombreSurcursal && parametros.StockEnviar
   ) {
 
-    Sucursales.findOne({ _id: idSurcursal, idEmpresa: req.user.sub }, (err, sucursalEmpresaEncontrada) => {
+    Sucursales.findOne({ nombre: parametros.nombreSurcursal, idEmpresa: req.user.sub }, (err, sucursalEmpresaEncontrada) => {
       if (!sucursalEmpresaEncontrada) return res.status(404).send({ mensaje: "surcursal no encontrada" });
       if (err) return res.status(404).send({ mensaje: "surcursal no encontrada" });
 
