@@ -204,6 +204,7 @@ function VerProductosPorSucursales(req, res) {
     (err, productoEncontrado) => {
       if (err)
         return res.status(404).send({ mensaje: "Producto no encontrado" });
+        if(!productoEncontrado) return res.status(404).send({ mensaje: "Productossssss No hallados"})
       return res.status(200).send({ Productos: productoEncontrado });
     }
   )
