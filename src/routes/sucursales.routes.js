@@ -16,7 +16,7 @@ api.get('/Sucursales', [md_autenticacion.Auth, md_roles.verEmpresas], controlado
 api.get('/SucursalesId/:idSucursal', [md_autenticacion.Auth, md_roles.verEmpresas], controladorSurcusales.verSucursalesId)
 
 //productos surcursales 
-api.post('/EnviarProductosSurcursales', [md_autenticacion.Auth, md_roles.verEmpresas], controladorSurcusales.agregarProductosSurcursales)
+api.put('/EnviarProductosSurcursales/:idSurcursal', [md_autenticacion.Auth, md_roles.verEmpresas], controladorSurcusales.agregarProductosSurcursales)
 api.get('/VerProductosPorSucursales/:idSurcursal', [md_autenticacion.Auth, md_roles.verEmpresas], controladorSurcusales.VerProductosPorSucursales)
 api.put('/VentaSimuladaSurcursal/:idSurcursal', [md_autenticacion.Auth, md_roles.verEmpresas] ,controladorSurcusales.VentaSimuladaSurcursales)
 api.get('/stockMasAlto/:idSurcursal', [md_autenticacion.Auth, md_roles.verEmpresas], controladorSurcusales.OrdenarStockSurcursaleskMayor)
