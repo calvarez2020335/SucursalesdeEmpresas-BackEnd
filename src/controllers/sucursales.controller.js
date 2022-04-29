@@ -189,7 +189,7 @@ function agregarProductosSurcursales(req, res) {
               if (!StockModificado) return res.status(404).send({ mensaje: "Producto no encontrado z" });
               if (err) return res.status(404).send({ mensaje: "Producto no encontrado w" });
 
-              return res.status(404).send({ productoafectado: StockModificado });
+              return res.status(200).send({ productoafectado: StockModificado });
             })
           }
         })
