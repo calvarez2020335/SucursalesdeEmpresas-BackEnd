@@ -124,12 +124,14 @@ function verSucursalesId(req, res) {
 
 function agregarProductosSurcursales(req, res) {
   const parametros = req.body;
+  const idSurcursal = req.params.idSurcursal;
+
   const modeloProductosSurcursales = new ProductoSurcursales();
 
   if (
-    parametros.NombreProducto &&
-    parametros.nombreSurcursal &&
-    parametros.StockEnviar
+
+    parametros.NombreProductoSucursal && parametros.StockSurcursal
+
   ) {
     Sucursales.findOne(
       { nombre: parametros.nombreSurcursal, idEmpresa: req.user.sub },
@@ -139,31 +141,14 @@ function agregarProductosSurcursales(req, res) {
         if (err)
           return res.status(404).send({ mensaje: "surcursal no encontrada" });
 
-        ProductosEmpresas.findOne(
-          {
-            NombreProducto: parametros.NombreProducto,
-            idEmpresa: req.user.sub,
-          },
-          (err, productoEncontrado) => {
-            if (!productoEncontrado)
-              return res
-                .status(404)
-                .send({ mensaje: "Producto no encontrado empresas" });
-            if (err)
-              return res
-                .status(404)
-                .send({ mensaje: "Producto no encontrado" });
+    Sucursales.findOne({ _id: idSurcursal, idEmpresa: req.user.sub }, (err, sucursalEmpresaEncontrada) => {
+    console.log(sucursalEmpresaEncontrada);
+      if (!sucursalEmpresaEncontrada) return res.status(404).send({ mensaje: "surcursal no encontrada" });
+      if (err) return res.status(404).send({ mensaje: "surcursal no encontrada" });
 
-            ProductoSurcursales.findOne(
-              {
-                NombreProductoSucursal: parametros.NombreProducto,
-                idSurcursal: sucursalEmpresaEncontrada.id,
-              },
-              (err, ProductoSurcursalesEncontrada) => {
-                if (err)
-                  return res
-                    .status(404)
-                    .send({ mensaje: "producto no encontrada surcursales" });
+      ProductosEmpresas.findOne({ NombreProducto: parametros.NombreProductoSucursal, idEmpresa: req.user.sub }, (err, productoEncontrado) => {
+        if (!productoEncontrado) return res.status(404).send({ mensaje: "Producto no encontrado empresas" });
+        if (err) return res.status(404).send({ mensaje: "Producto no encontrado a" });
 
                 if (parametros.StockEnviar <= 0) {
                   return res
@@ -171,79 +156,58 @@ function agregarProductosSurcursales(req, res) {
                     .send({ mensaje: "formato incorrecto" });
                 }
 
-                if (parametros.StockEnviar > productoEncontrado.Stock) {
-                  return res.status(404).send({ mensaje: "no hay stock " });
-                }
+        ProductoSurcursales.findOne({ NombreProductoSucursal: parametros.NombreProductoSucursal, idSurcursal: sucursalEmpresaEncontrada.id }, (err, ProductoSurcursalesEncontrada) => {
+          if (err) return res.status(404).send({ mensaje: "producto no encontrada surcursales" });
 
-                const data = {
-                  Stock: productoEncontrado.Stock,
-                };
-                data.Stock = productoEncontrado.Stock - parametros.StockEnviar;
-
-                if (ProductoSurcursalesEncontrada == null) {
-                  modeloProductosSurcursales.idSurcursal =
-                    sucursalEmpresaEncontrada.id;
-                  modeloProductosSurcursales.NombreProductoSucursal =
-                    parametros.NombreProducto;
-                  modeloProductosSurcursales.StockSurcursal =
-                    parametros.StockEnviar;
-                  modeloProductosSurcursales.CantidadVendida = 0;
-
-                  modeloProductosSurcursales.save((err, SurcursalGuardada) => {
-                    ProductosEmpresas.findOneAndUpdate(
-                      { _id: productoEncontrado.id },
-                      data,
-                      { new: true },
-                      (err, ActualizarStockEmpresa) => {}
-                    );
-                    if (err)
-                      return res
-                        .status(500)
-                        .send({ mensaje: "Error en la peticion" });
-                    if (!SurcursalGuardada)
-                      return res
-                        .status(500)
-                        .send({ mensaje: "Error al agregar Surcusal" });
-
-                    return res
-                      .status(200)
-                      .send({ Surcusal: SurcursalGuardada });
-                  });
-                } else {
-                  ProductoSurcursales.findByIdAndUpdate(
-                    { _id: ProductoSurcursalesEncontrada.id },
-                    { $inc: { StockSurcursal: parametros.StockEnviar } },
-                    { new: true },
-                    (err, StockModificado) => {
-                      ProductosEmpresas.findOneAndUpdate(
-                        { _id: productoEncontrado.id },
-                        data,
-                        { new: true },
-                        (err, ActualizarStockEmpresa) => {}
-                      );
-                      if (!StockModificado)
-                        return res
-                          .status(404)
-                          .send({ mensaje: "Producto no encontrado" });
-                      if (err)
-                        return res
-                          .status(404)
-                          .send({ mensaje: "Producto no encontrado" });
-
-                      return res
-                        .status(404)
-                        .send({ productoafectado: StockModificado });
-                    }
-                  );
-                }
-              }
-            );
+          if (parametros.StockSurcursal <= 0) {
+            return res.status(404).send({ mensaje: "formato incorrecto" });
           }
-        );
-      }
-    );
+
+          if (parametros.StockSurcursal > productoEncontrado.Stock) {
+            return res.status(404).send({ mensaje: "no hay stock " });
+          }
+
+          const data = {
+            Stock: productoEncontrado.Stock,
+          }
+          data.Stock = productoEncontrado.Stock - parametros.StockSurcursal
+
+          if (ProductoSurcursalesEncontrada == null) {
+
+            modeloProductosSurcursales.idSurcursal = sucursalEmpresaEncontrada.id;
+            modeloProductosSurcursales.NombreProductoSucursal = parametros.NombreProductoSucursal
+            modeloProductosSurcursales.StockSurcursal = parametros.StockSurcursal
+            modeloProductosSurcursales.CantidadVendida = 0
+
+            modeloProductosSurcursales.save((err, SurcursalGuardada) => {
+              ProductosEmpresas.findOneAndUpdate({ _id: productoEncontrado.id }, data, { new: true }, (err, ActualizarStockEmpresa) => {
+              })
+              if (err)
+                return res.status(500).send({ mensaje: "Error en la peticion" });
+              if (!SurcursalGuardada)
+                return res
+                  .status(500)
+                  .send({ mensaje: "Error al agregar Surcusal" });
+
+              return res.status(200).send({ Surcusal: SurcursalGuardada });
+            });
+          } else {
+
+            ProductoSurcursales.findByIdAndUpdate({ _id: ProductoSurcursalesEncontrada.id }, { $inc: { StockSurcursal: parametros.StockSurcursal } }, { new: true }, (err, StockModificado) => {
+              ProductosEmpresas.findOneAndUpdate({ _id: productoEncontrado.id }, data, { new: true }, (err, ActualizarStockEmpresa) => {
+              })
+              if (!StockModificado) return res.status(404).send({ mensaje: "Producto no encontrado z" });
+              if (err) return res.status(404).send({ mensaje: "Producto no encontrado w" });
+
+              return res.status(404).send({ productoafectado: StockModificado });
+            })
+          }
+        })
+      });
+    })
+
   } else {
-    return res.status(500).send({ Surcusal: "enviar parametros obligatorios" });
+    return res.status(500).send({ Surcusal: "enviar parametros obligatorios" + " " + parametros.NombreProducto + " " +  " "  + parametros.StockEnviar  } );
   }
 }
 
