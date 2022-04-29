@@ -133,13 +133,6 @@ function agregarProductosSurcursales(req, res) {
     parametros.NombreProductoSucursal && parametros.StockSurcursal
 
   ) {
-    Sucursales.findOne(
-      { nombre: parametros.nombreSurcursal, idEmpresa: req.user.sub },
-      (err, sucursalEmpresaEncontrada) => {
-        if (!sucursalEmpresaEncontrada)
-          return res.status(404).send({ mensaje: "surcursal no encontrada" });
-        if (err)
-          return res.status(404).send({ mensaje: "surcursal no encontrada" });
 
     Sucursales.findOne({ _id: idSurcursal, idEmpresa: req.user.sub }, (err, sucursalEmpresaEncontrada) => {
     console.log(sucursalEmpresaEncontrada);
@@ -150,11 +143,6 @@ function agregarProductosSurcursales(req, res) {
         if (!productoEncontrado) return res.status(404).send({ mensaje: "Producto no encontrado empresas" });
         if (err) return res.status(404).send({ mensaje: "Producto no encontrado a" });
 
-                if (parametros.StockEnviar <= 0) {
-                  return res
-                    .status(404)
-                    .send({ mensaje: "formato incorrecto" });
-                }
 
         ProductoSurcursales.findOne({ NombreProductoSucursal: parametros.NombreProductoSucursal, idSurcursal: sucursalEmpresaEncontrada.id }, (err, ProductoSurcursalesEncontrada) => {
           if (err) return res.status(404).send({ mensaje: "producto no encontrada surcursales" });
@@ -205,10 +193,11 @@ function agregarProductosSurcursales(req, res) {
         })
       });
     })
-  });
+
   } else {
     return res.status(500).send({ Surcusal: "enviar parametros obligatorios" + " " + parametros.NombreProducto + " " +  " "  + parametros.StockEnviar  } );
   }
+
 }
 
 function VerProductosPorSucursales(req, res) {
