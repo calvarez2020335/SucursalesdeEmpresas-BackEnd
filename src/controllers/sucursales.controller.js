@@ -189,7 +189,7 @@ function agregarProductosSurcursales(req, res) {
               if (!StockModificado) return res.status(404).send({ mensaje: "Producto no encontrado z" });
               if (err) return res.status(404).send({ mensaje: "Producto no encontrado w" });
 
-              return res.status(404).send({ productoafectado: StockModificado });
+              return res.status(200).send({ productoafectado: StockModificado });
             })
           }
         })
@@ -306,6 +306,21 @@ function ElMasVendidoProductos(req, res) {
   ).sort({CantidadVendida: -1})
 
 }
+
+function VerProductosSurucrsalesId(req, res) {
+  const idProducto = req.params.idProducto;
+
+  ProductoSurcursales.findById(
+    { _id: idProducto},
+    (err, productoEncontrado) => {
+      if (err)
+        return res.status(404).send({ mensaje: "Producto no encontrado" });
+      return res.status(200).send({ Productos: productoEncontrado });
+    }
+  );
+}
+
+
 module.exports = {
   agregarSucursales,
   eliminarSucursales,
@@ -318,7 +333,8 @@ module.exports = {
   VentaSimuladaSurcursales,
   OrdenarStockSurcursaleskMayor ,
   ElMasVendidoProductos,
-  OrdenarStockSurcursaleskMenor
+  OrdenarStockSurcursaleskMenor,
+  VerProductosSurucrsalesId
 
 
 };
