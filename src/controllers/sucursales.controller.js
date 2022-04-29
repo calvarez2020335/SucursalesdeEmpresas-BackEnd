@@ -205,7 +205,7 @@ function agregarProductosSurcursales(req, res) {
         })
       });
     })
-
+  });
   } else {
     return res.status(500).send({ Surcusal: "enviar parametros obligatorios" + " " + parametros.NombreProducto + " " +  " "  + parametros.StockEnviar  } );
   }
