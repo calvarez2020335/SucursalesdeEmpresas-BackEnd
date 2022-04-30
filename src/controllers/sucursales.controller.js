@@ -306,6 +306,21 @@ function ElMasVendidoProductos(req, res) {
   ).sort({CantidadVendida: -1})
 
 }
+
+function VerProductosSurucrsalesId(req, res) {
+  const idProducto = req.params.idProducto;
+
+  ProductoSurcursales.findById(
+    { _id: idProducto},
+    (err, productoEncontrado) => {
+      if (err)
+        return res.status(404).send({ mensaje: "Producto no encontrado" });
+      return res.status(200).send({ Productos: productoEncontrado });
+    }
+  );
+}
+
+
 module.exports = {
   agregarSucursales,
   eliminarSucursales,
@@ -318,7 +333,8 @@ module.exports = {
   VentaSimuladaSurcursales,
   OrdenarStockSurcursaleskMayor ,
   ElMasVendidoProductos,
-  OrdenarStockSurcursaleskMenor
+  OrdenarStockSurcursaleskMenor,
+  VerProductosSurucrsalesId
 
 
 };
