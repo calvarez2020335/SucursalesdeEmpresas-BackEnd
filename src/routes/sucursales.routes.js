@@ -22,5 +22,5 @@ api.put('/VentaSimuladaSurcursal/:idSurcursal', [md_autenticacion.Auth, md_roles
 api.get('/stockMasAlto/:idSurcursal', [md_autenticacion.Auth, md_roles.verEmpresas], controladorSurcusales.OrdenarStockSurcursaleskMayor)
 api.get('/stockMasBajo/:idSurcursal', [md_autenticacion.Auth, md_roles.verEmpresas], controladorSurcusales.OrdenarStockSurcursaleskMenor)
 api.get('/ElProductoMasVendido/:idSurcursal', [md_autenticacion.Auth, md_roles.verEmpresas], controladorSurcusales.ElMasVendidoProductos)
-
+api.get('/ProductosSurcursalesId/:idProducto' , [md_autenticacion.Auth, md_roles.verEmpresas], controladorSurcusales.VerProductosSurucrsalesId)
 module.exports = api;
