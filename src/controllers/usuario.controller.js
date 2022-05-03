@@ -120,7 +120,7 @@ function EditarEmpresa(req, res) {
   var idUser = req.params.idUser;
   var parametros = req.body;
 
-  if (req.user.rol !== "ROL_ADMIN") {
+  if (req.user.rol !== "ROL_EMPRESA") {
     return res.status(500).send({ mensaje: "No tiene acceso a este recurso" });
   }
 
