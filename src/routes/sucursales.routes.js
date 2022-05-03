@@ -14,7 +14,9 @@ api.delete('/eliminarSucursales/:idSucursal', [md_autenticacion.Auth, md_roles.v
 api.put('/editarSurcursal/:idSurcursal', [md_autenticacion.Auth, md_roles.verEmpresas] ,controladorSurcusales.editarSurcursal)
 api.get('/Sucursales', [md_autenticacion.Auth, md_roles.verEmpresas], controladorSurcusales.verSucursalesEmpresas)
 api.get('/SucursalesId/:idSucursal', [md_autenticacion.Auth, md_roles.verEmpresas], controladorSurcusales.verSucursalesId)
-
+//admin
+api.get('/SurcursalesAdmin/:idEmpresa', [md_autenticacion.Auth, md_roles.verAdministrador], controladorSurcusales.verSurcursalesAdmin)
+//-----
 //productos surcursales 
 api.put('/EnviarProductosSurcursales/:idSurcursal', [md_autenticacion.Auth, md_roles.verEmpresas], controladorSurcusales.agregarProductosSurcursales)
 api.get('/VerProductosPorSucursales/:idSurcursal', [md_autenticacion.Auth, md_roles.verEmpresas], controladorSurcusales.VerProductosPorSucursales)

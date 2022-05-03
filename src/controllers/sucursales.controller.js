@@ -112,6 +112,8 @@ function verSucursalesEmpresas(req, res) {
 
 }
 
+
+
 //Se usa para poder editar la sucursal
 function verSucursalesId(req, res) {
 
