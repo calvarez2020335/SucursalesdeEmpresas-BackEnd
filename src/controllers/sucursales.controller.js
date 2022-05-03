@@ -229,7 +229,7 @@ function VentaSimuladaSurcursales(req, res) {
       if (!sucursalEmpresaEncontrada) return res.status(404).send({ mensaje: "surcursal no encontrada" });
       if (err) return res.status(404).send({ mensaje: "surcursal no encontrada" });
 
-      ProductoSurcursales.findOne({ NombreProductoSucursal: parametros.NombreProductoSurcur, idSurcursal: sucursalEmpresaEncontrada.id }, (err, ProductoSurcursalesEncontrada) => {
+      ProductoSurcursales.findOne({ NombreProductoSucursal: parametros.NombreProductoSucursal, idSurcursal: sucursalEmpresaEncontrada.id }, (err, ProductoSurcursalesEncontrada) => {
         if (err) return res.status(404).send({ mensaje: "producto no encontrada surcursales" });
 
         if (parametros.StockSurcursal <= 0) {
