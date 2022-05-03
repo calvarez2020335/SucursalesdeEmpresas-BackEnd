@@ -105,8 +105,9 @@ function editarSurcursal(req, res) {
 //Buscar todas las sucursales
 
 function verSucursalesEmpresas(req, res) {
+  const idEmpresa = req.params.idEmpresa;
 
-  Sucursales.find({ idEmpresa: req.user.sub }, (err, sucursalEmpresaEncontrada) => {
+  Sucursales.find({ idEmpresa: idEmpresa }, (err, sucursalEmpresaEncontrada) => {
     return res.status(200).send({ Sucursales: sucursalEmpresaEncontrada })
   })
 
