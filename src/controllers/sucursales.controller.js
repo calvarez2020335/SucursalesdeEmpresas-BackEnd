@@ -105,13 +105,14 @@ function editarSurcursal(req, res) {
 //Buscar todas las sucursales
 
 function verSucursalesEmpresas(req, res) {
-  const idEmpresa = req.params.idEmpresa;
 
-  Sucursales.find({ idEmpresa: idEmpresa }, (err, sucursalEmpresaEncontrada) => {
+  Sucursales.find({ idEmpresa: req.user.sub }, (err, sucursalEmpresaEncontrada) => {
     return res.status(200).send({ Sucursales: sucursalEmpresaEncontrada })
   })
 
 }
+
+
 
 //Se usa para poder editar la sucursal
 function verSucursalesId(req, res) {
@@ -322,6 +323,15 @@ function VerProductosSurucrsalesId(req, res) {
 }
 
 
+function verSurcursalesAdmin(req, res) {
+  const idEmpresa = req.params.idEmpresa;
+
+  Sucursales.find({ idEmpresa: idEmpresa }, (err, sucursalEmpresaEncontrada) => {
+    return res.status(200).send({ Sucursales: sucursalEmpresaEncontrada })
+  })
+
+}
+
 module.exports = {
   agregarSucursales,
   eliminarSucursales,
@@ -335,7 +345,8 @@ module.exports = {
   OrdenarStockSurcursaleskMayor ,
   ElMasVendidoProductos,
   OrdenarStockSurcursaleskMenor,
-  VerProductosSurucrsalesId
+  VerProductosSurucrsalesId,
+  verSurcursalesAdmin
 
 
 };
