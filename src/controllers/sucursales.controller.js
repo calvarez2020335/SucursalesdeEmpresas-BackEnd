@@ -222,7 +222,7 @@ function VentaSimuladaSurcursales(req, res) {
   const idSurcu = req.params.idSurcursal
 
   if (
-    parametros.NombreProductoSurcur && parametros.StockVender
+    parametros.NombreProductoSucursal && parametros.StockSurcursal
   ) {
 
     Sucursales.findOne({ _id: idSurcu, idEmpresa: req.user.sub }, (err, sucursalEmpresaEncontrada) => {
@@ -232,7 +232,7 @@ function VentaSimuladaSurcursales(req, res) {
       ProductoSurcursales.findOne({ NombreProductoSucursal: parametros.NombreProductoSurcur, idSurcursal: sucursalEmpresaEncontrada.id }, (err, ProductoSurcursalesEncontrada) => {
         if (err) return res.status(404).send({ mensaje: "producto no encontrada surcursales" });
 
-        if (parametros.StockVender <= 0) {
+        if (parametros.StockSurcursal <= 0) {
           return res.status(404).send({ mensaje: "formato incorrecto" });
         }
 
@@ -244,8 +244,8 @@ function VentaSimuladaSurcursales(req, res) {
           StockSurcursal: ProductoSurcursalesEncontrada.StockSurcursal,
           CantidadVendida: ProductoSurcursalesEncontrada.CantidadVendida
         }
-        data.StockSurcursal = ProductoSurcursalesEncontrada.StockSurcursal - parametros.StockVender
-        data.CantidadVendida = parseFloat(data.CantidadVendida)  + parseFloat(parametros.StockVender) 
+        data.StockSurcursal = ProductoSurcursalesEncontrada.StockSurcursal - parametros.StockSurcursal
+        data.CantidadVendida = parseFloat(data.CantidadVendida)  + parseFloat(parametros.StockSurcursal) 
 
         if (ProductoSurcursalesEncontrada == null) {
           return res.status(404).send({ mensaje: "producto no encontrada en surcursales" });
@@ -256,7 +256,7 @@ function VentaSimuladaSurcursales(req, res) {
             if (!StockModificado) return res.status(404).send({ mensaje: "Producto no encontrado" });
             if (err) return res.status(404).send({ mensaje: "Producto no encontrado" });
 
-            return res.status(404).send({ productoafectado: StockModificado });
+            return res.status(200).send({ productoafectado: StockModificado });
           })
         }
       })
