@@ -115,7 +115,6 @@ function RegistrarEmpresa(req, res) {
   }
 }
 
-
 function EditarEmpresa(req, res) {
   var idUser = req.params.idUser;
   var parametros = req.body;
@@ -203,8 +202,16 @@ function EliminarEmpresas(req, res) {
 }
 
 function VerEmpresas(req, res) {
-  Usuario.find({}, (err, UsuarioEncontrado) => {
-    return res.status(200).send({ Empresas: UsuarioEncontrado });
+  Usuario.findOne({ _id: req.user.rol }, (err, usuarioEncontrado) => {
+    if (req.user.rol == "ROL_ADMIN") {
+      Usuario.find({}, (err, UsuarioEncontrado) => {
+        return res.status(200).send({ Empresas: UsuarioEncontrado });
+      });
+    } else {
+      Usuario.find({_id: req.user.rol}, (err, UsuarioEncontrado) =>{
+        return res.status(200).send({mensaje: UsuarioEncontrado});
+      })
+    }
   });
 }
 
