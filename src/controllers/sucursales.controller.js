@@ -206,15 +206,24 @@ function agregarProductosSurcursales(req, res) {
 
 function VerProductosPorSucursales(req, res) {
   var idSurcursal = req.params.idSurcursal;
-  ProductoSurcursales.find(
-    {idSurcursal: idSurcursal ,idEmpresa: req.user.sub },
-    (err, productoEncontrado) => {
-      if (err)
-        return res.status(404).send({ mensaje: "Producto no encontrado" });
-        if(!productoEncontrado) return res.status(404).send({ mensaje: "Productossssss No hallados"})
-      return res.status(200).send({ Productos: productoEncontrado });
+  Sucursales.findOne(
+    { _id: idSurcursal, idEmpresa: req.user.sub},
+    (err, sucursalEncontrada) => {
+      if(!sucursalEncontrada) return res.status(400).send({mensaje: "No puede ver productos de otra empresas"})
+      ProductoSurcursales.find(
+        { idSurcursal: idSurcursal },
+        (err, productoEncontrado) => {
+          if (err)
+            return res.status(404).send({ mensaje: "Producto no encontrado" });
+          if (!productoEncontrado)
+            return res
+              .status(404)
+              .send({ mensaje: "Productossssss No hallados" });
+          return res.status(200).send({ Productos: productoEncontrado });
+        }
+      );
     }
-  )
+  );
 }
 
 function VentaSimuladaSurcursales(req, res) {
