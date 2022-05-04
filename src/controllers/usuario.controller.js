@@ -115,27 +115,67 @@ function RegistrarEmpresa(req, res) {
   }
 }
 
-//Falta arreglar este
+
 function EditarEmpresa(req, res) {
   var idUser = req.params.idUser;
   var parametros = req.body;
 
-  if (req.user.rol !== "ROL_EMPRESA") {
-    return res.status(500).send({ mensaje: "No tiene acceso a este recurso" });
-  }
+  Usuario.findOne({ idUser: idUser }, (err, usuarioEncontrado) => {
+    if (req.user.rol == "ROL_ADMIN") {
+      if (usuarioEncontrado.rol !== "ROL_EMPRESA") {
+        return res
+          .status(500)
+          .send({ mensaje: "No puede editar a otros administradores" });
+      } else {
+        Usuario.findByIdAndUpdate(
+          idUser,
+          {
+            $set: {
+              nombre: parametros.nombre,
+              telefono: parametros.telefono,
+              direccion: parametros.direccion,
+              tipoEmpresa: parametros.tipoEmpresa,
+            },
+          },
+          { new: true },
+          (err, usuarioActualizado) => {
+            if (err)
+              return res
+                .status(500)
+                .send({ mensaje: "Error en la peticon de editar-admin" });
+            if (!usuarioActualizado)
+              return res
+                .status(500)
+                .send({ mensaje: "Error al editar usuario-admin" });
+            return res.status(200).send({ usuario: usuarioActualizado });
+          }
+        );
+      }
+    } else {
+      Usuario.findByIdAndUpdate(
+        req.user.sub,
+        {
+          $set: {
+            nombre: parametros.nombre,
+            telefono: parametros.telefono,
+            direccion: parametros.direccion,
+            tipoEmpresa: parametros.tipoEmpresa,
+          },
+        },
+        { new: true },
+        (err, usuarioActualizado) => {
+          if (err)
+            return res.status(500).send({ mensaje: "Error en la peticion" });
+          if (!usuarioActualizado)
+            return res
+              .status(500)
+              .send({ mensaje: "Error al editar el Usuario" });
 
-  Usuario.findByIdAndUpdate(
-    idUser,
-    parametros,
-    { new: true },
-    (err, usuarioEditado) => {
-      if (err) return res.status(500).send({ mensaje: "Error en la peticion" });
-      if (!usuarioEditado)
-        return res.status(403).send({ mensaje: "Error al editar la empresa" });
-
-      return res.status(200).send({ usuario: usuarioEditado });
+          return res.status(200).send({ usuario: usuarioActualizado });
+        }
+      );
     }
-  );
+  });
 }
 
 //Falta este tambien
@@ -162,41 +202,34 @@ function EliminarEmpresas(req, res) {
   });
 }
 
-
 function VerEmpresas(req, res) {
   Usuario.find({}, (err, UsuarioEncontrado) => {
     return res.status(200).send({ Empresas: UsuarioEncontrado });
   });
 }
 
-
-function EmpresaId(req, res){
+function EmpresaId(req, res) {
   const idUser = req.params.idUser;
 
-
-
-  Usuario.findById({_id: idUser, idEmpresa: req.user.sub}, (err, EmpresaEncontrada)=>{
-
-    if( EmpresaEncontrada.id == req.user.sub ){
-
-      
-    if (err) return res.status(404).send({ mensaje: "Empresa no encontrado" });
-    if(!EmpresaEncontrada) return res.status(404).send({ mensaje: "Empresa no encontrado" });
-    return res.status(200).send({ Empresa:  EmpresaEncontrada});
-    } else {
-      return res.status(500).send({ Mensaje: "No puedes ver otras empresas"});
+  Usuario.findById(
+    { _id: idUser, idEmpresa: req.user.sub },
+    (err, EmpresaEncontrada) => {
+      if (EmpresaEncontrada.id == req.user.sub) {
+        if (err)
+          return res.status(404).send({ mensaje: "Empresa no encontrado" });
+        if (!EmpresaEncontrada)
+          return res.status(404).send({ mensaje: "Empresa no encontrado" });
+        return res.status(200).send({ Empresa: EmpresaEncontrada });
+      } else {
+        return res
+          .status(500)
+          .send({ Mensaje: "No puedes ver otras empresas" });
+      }
     }
-
-  })
-
-
-
-
-  
+  );
 }
 
 //Productos
-
 
 function agregarProductosEmpresas(req, res) {
   var parametro = req.body;
@@ -326,13 +359,14 @@ function EditarProductoEmpresa(req, res) {
         );
       }
     );
-  }else{
-    return res.status(404).send({ mensaje: "Debe enviar parametros obligatorios" });
+  } else {
+    return res
+      .status(404)
+      .send({ mensaje: "Debe enviar parametros obligatorios" });
   }
 }
 
 function OrdenarStockMayor(req, res) {
-
   ProductosEmpresas.find(
     { idEmpresa: req.user.sub },
     (err, productoEncontrado) => {
@@ -340,12 +374,10 @@ function OrdenarStockMayor(req, res) {
         return res.status(404).send({ mensaje: "Producto no encontrado" });
       return res.status(200).send({ Productos: productoEncontrado });
     }
-  ).sort({Stock: -1})
-
+  ).sort({ Stock: -1 });
 }
 
 function OrdenarStockMenor(req, res) {
-
   ProductosEmpresas.find(
     { idEmpresa: req.user.sub },
     (err, productoEncontrado) => {
@@ -353,8 +385,7 @@ function OrdenarStockMenor(req, res) {
         return res.status(404).send({ mensaje: "Producto no encontrado" });
       return res.status(200).send({ Productos: productoEncontrado });
     }
-  ).sort({Stock: 1})
-
+  ).sort({ Stock: 1 });
 }
 
 function eliminarEnCasda (req , res){
@@ -404,5 +435,5 @@ module.exports = {
   EditarProductoEmpresa,
   VerProductosId,
   OrdenarStockMayor,
-  OrdenarStockMenor
+  OrdenarStockMenor,
 };
