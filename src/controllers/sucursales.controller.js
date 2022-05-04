@@ -322,7 +322,6 @@ function VerProductosSurucrsalesId(req, res) {
   );
 }
 
-
 function verSurcursalesAdmin(req, res) {
   const idEmpresa = req.params.idEmpresa;
 
