@@ -357,6 +357,39 @@ function OrdenarStockMenor(req, res) {
 
 }
 
+function eliminarEnCasda (req , res){
+  var idUsua = req.params.idUser;
+
+  if (req.user.rol !== "ROL_ADMIN") {
+    return res
+      .status(500)
+      .send({ mensaje: "No tiene los permisos para eliminar Empresas." });
+  }
+
+
+  Usuario.findOne(idUsua, (err , UsuarioEncontrado) =>{
+    if (err) return res.status(500).send({ mensaje: "Error en la peticion de usuario" });
+    if (!UsuarioEncontrado) return res.status(500).send({ mensaje: "Error al encontra usuario" });
+
+
+    Usuario.findByIdAndDelete(idUsua, (err, UsuarioEliminado) => {
+      if (err) return res.status(500).send({ mensaje: "Error en la peticion" });
+      if (!UsuarioEliminado)
+        return res.status(500).send({ mensaje: "Error al eliminar el producto" });
+  
+      return res.status(200).send({ usuario: UsuarioEliminado });
+    });
+
+
+
+
+  })
+
+
+
+
+}
+
 module.exports = {
   registrarAdmin,
   Login,
