@@ -261,17 +261,13 @@ function EmpresaId(req, res) {
   Usuario.findById(
     { _id: idUser, idEmpresa: req.user.sub },
     (err, EmpresaEncontrada) => {
-      if (EmpresaEncontrada.id == req.user.sub) {
+       
         if (err)
           return res.status(404).send({ mensaje: "Empresa no encontrado" });
         if (!EmpresaEncontrada)
           return res.status(404).send({ mensaje: "Empresa no encontrado" });
         return res.status(200).send({ Empresa: EmpresaEncontrada });
-      } else {
-        return res
-          .status(500)
-          .send({ Mensaje: "No puedes ver otras empresas" });
-      }
+      
     }
   );
 }
