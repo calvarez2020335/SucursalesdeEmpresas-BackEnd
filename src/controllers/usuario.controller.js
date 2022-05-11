@@ -1,7 +1,5 @@
 const Usuario = require("../models/usuario.model");
-const Surcursal = require("../models/sucursales.model")
 const ProductosEmpresas = require("../models/productos.empresas.model");
-const ProductoSurcursales = require("../models/productos.surcursales.model");
 const bcrypt = require("bcrypt-nodejs");
 const jwt = require("../services/jwt");
 
@@ -178,62 +176,24 @@ function EditarEmpresa(req, res) {
 function EliminarEmpresas(req, res) {
   var idUsua = req.params.idUser;
 
-  
+  if (req.user.rol !== "ROL_ADMIN") {
+    return res
+      .status(500)
+      .send({ mensaje: "No tiene los permisos para eliminar Empresas." });
+  }
 
+  if (req.user.sub == idUsua) {
+    console.log(req.user.nombre);
+    return res.status(500).send({ mensaje: "El admin no se puede borrar" });
+  }
 
-  Surcursal.find({idEmpresa: idUsua} , (err , busqueda) =>{
-      if (err) return res.status(500).send({ mensaje: "Error en la peticion" });
-      if (!busqueda)
-         return res.status(500).send({ mensaje: "Error al eliminar el producto" });
+  Usuario.findByIdAndDelete(idUsua, (err, UsuarioEliminado) => {
+    if (err) return res.status(500).send({ mensaje: "Error en la peticion" });
+    if (!UsuarioEliminado)
+      return res.status(500).send({ mensaje: "Error al eliminar el producto" });
 
-
-
-      for (let i = 0; i < busqueda.length; i++) {
-     
-
-        ProductoSurcursales.deleteMany({idSurcursal: busqueda[i]._id} ,(err, busqueda1) => {
-          if (err) return res.status(500).send({ mensaje: "Error en la peticion" });
-          if (!busqueda1)
-             return res.status(500).send({ mensaje: "Error al eliminar el producto" });
-          console.log(busqueda1);
-        })
-        
-
-        
-      }
-
-
-      Surcursal.deleteMany({idEmpresa: idUsua } , (err, SucursalEliminada) =>{
-
-        if (err) return res.status(500).send({ mensaje: "Error en la peticion" });
-        if (!SucursalEliminada)
-           return res.status(500).send({ mensaje: "Error al eliminar el producto" });
-
-    console.log({ SucursalEliminada: SucursalEliminada});
-      } )
-
-      ProductosEmpresas.deleteMany({idEmpresa: idUsua}, (err, productoEliminado)=>{
-
-        if (err) return res.status(500).send({ mensaje: "Error en la peticion" });
-        if (!productoEliminado)
-           return res.status(500).send({ mensaje: "Error al eliminar el producto" });
-
-          console.log({ productoEliminado: productoEliminado})
-      })
-
-      Usuario.deleteOne({_id: idUsua} , (err, EmpresaEliminada) =>{
-
-        if (err) return res.status(500).send({ mensaje: "Error en la peticion" });
-        if (!EmpresaEliminada)
-           return res.status(500).send({ mensaje: "Error al eliminar el producto" });
-
-          return res.status(200).send({ EmpresaEliminada: EmpresaEliminada})
-
-      })
-
-
-    });  
-
+    return res.status(200).send({ usuario: UsuarioEliminado });
+  });
 }
 
 function VerEmpresas(req, res) {
@@ -252,7 +212,6 @@ function VerEmpresas(req, res) {
 
 function EmpresaId(req, res) {
   const idUser = req.params.idUser;
-
 
   if (req.user.rol == "ROL_EMPRESA") {
     Usuario.findById(
@@ -280,20 +239,6 @@ function EmpresaId(req, res) {
       return res.status(200).send({ Empresa: EmpresaEncontrada });
     });
   }
-
-  Usuario.findById(
-    { _id: idUser, idEmpresa: req.user.sub },
-    (err, EmpresaEncontrada) => {
-       
-        if (err)
-          return res.status(404).send({ mensaje: "Empresa no encontrado" });
-        if (!EmpresaEncontrada)
-          return res.status(404).send({ mensaje: "Empresa no encontrado" });
-        return res.status(200).send({ Empresa: EmpresaEncontrada });
-      
-    }
-  );
-
 }
 
 //Productos
@@ -454,9 +399,6 @@ function OrdenarStockMenor(req, res) {
     }
   ).sort({ Stock: 1 });
 }
-
-
-
 
 module.exports = {
   registrarAdmin,
