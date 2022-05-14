@@ -199,7 +199,7 @@ function EliminarEmpresas(req, res) {
 function VerEmpresas(req, res) {
   Usuario.findOne({ _id: req.user.rol }, (err, usuarioEncontrado) => {
     if (req.user.rol == "ROL_ADMIN") {
-      Usuario.find({}, (err, UsuarioEncontrado) => {
+      Usuario.find({rol: 'ROL_EMPRESA'}, (err, UsuarioEncontrado) => {
         return res.status(200).send({ Empresas: UsuarioEncontrado });
       });
     } else {
