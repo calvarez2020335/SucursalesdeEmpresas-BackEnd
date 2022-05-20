@@ -1,5 +1,7 @@
 const Usuario = require("../models/usuario.model");
 const ProductosEmpresas = require("../models/productos.empresas.model");
+const Surcursal = require("../models/sucursales.model");
+const ProductoSurcursales = require("../models/productos.surcursales.model");
 const bcrypt = require("bcrypt-nodejs");
 const jwt = require("../services/jwt");
 
@@ -176,24 +178,56 @@ function EditarEmpresa(req, res) {
 function EliminarEmpresas(req, res) {
   var idUsua = req.params.idUser;
 
-  if (req.user.rol !== "ROL_ADMIN") {
-    return res
-      .status(500)
-      .send({ mensaje: "No tiene los permisos para eliminar Empresas." });
-  }
+  Surcursal.find({idEmpresa: idUsua} , (err , busqueda) =>{
+      if (err) return res.status(500).send({ mensaje: "Error en la peticion" });
+      if (!busqueda)
+         return res.status(500).send({ mensaje: "Error al eliminar el producto" });
 
-  if (req.user.sub == idUsua) {
-    console.log(req.user.nombre);
-    return res.status(500).send({ mensaje: "El admin no se puede borrar" });
-  }
 
-  Usuario.findByIdAndDelete(idUsua, (err, UsuarioEliminado) => {
-    if (err) return res.status(500).send({ mensaje: "Error en la peticion" });
-    if (!UsuarioEliminado)
-      return res.status(500).send({ mensaje: "Error al eliminar el producto" });
 
-    return res.status(200).send({ usuario: UsuarioEliminado });
-  });
+      for (let i = 0; i < busqueda.length; i++) {
+
+
+        ProductoSurcursales.deleteMany({idSurcursal: busqueda[i]._id} ,(err, busqueda1) => {
+          if (err) return res.status(500).send({ mensaje: "Error en la peticion" });
+          if (!busqueda1)
+             return res.status(500).send({ mensaje: "Error al eliminar el producto" });
+          console.log(busqueda1);
+        })
+
+
+
+      }
+
+
+      Surcursal.deleteMany({idEmpresa: idUsua } , (err, SucursalEliminada) =>{
+
+        if (err) return res.status(500).send({ mensaje: "Error en la peticion" });
+        if (!SucursalEliminada)
+           return res.status(500).send({ mensaje: "Error al eliminar el producto" });
+
+    console.log({ SucursalEliminada: SucursalEliminada});
+      } )
+
+      ProductosEmpresas.deleteMany({idEmpresa: idUsua}, (err, productoEliminado)=>{
+
+        if (err) return res.status(500).send({ mensaje: "Error en la peticion" });
+        if (!productoEliminado)
+           return res.status(500).send({ mensaje: "Error al eliminar el producto" });
+      })
+
+      Usuario.deleteOne({_id: idUsua} , (err, EmpresaEliminada) =>{
+
+        if (err) return res.status(500).send({ mensaje: "Error en la peticion" });
+        if (!EmpresaEliminada)
+           return res.status(500).send({ mensaje: "Error al eliminar el producto" });
+
+          return res.status(200).send({ EmpresaEliminada: EmpresaEliminada})
+
+      })
+
+
+    });
 }
 
 function VerEmpresas(req, res) {
@@ -247,6 +281,7 @@ function agregarProductosEmpresas(req, res) {
   var parametro = req.body;
   var productosEmpresasModel = new ProductosEmpresas();
 
+  if(parametro.Stock <= 0) return res.status(500).send({mensaje: "No puede enviar el cero o numeros negativos"})
   if (
     parametro.NombreProducto &&
     parametro.NombreProveedor &&
