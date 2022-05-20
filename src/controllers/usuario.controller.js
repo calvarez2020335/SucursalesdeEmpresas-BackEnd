@@ -115,18 +115,12 @@ function RegistrarEmpresa(req, res) {
   }
 }
 
-
 function EditarEmpresa(req, res) {
   var idUser = req.params.idUser;
   var parametros = req.body;
 
   Usuario.findOne({ idUser: idUser }, (err, usuarioEncontrado) => {
     if (req.user.rol == "ROL_ADMIN") {
-      if (usuarioEncontrado.rol !== "ROL_EMPRESA") {
-        return res
-          .status(500)
-          .send({ mensaje: "No puede editar a otros administradores" });
-      } else {
         Usuario.findByIdAndUpdate(
           idUser,
           {
@@ -150,7 +144,7 @@ function EditarEmpresa(req, res) {
             return res.status(200).send({ usuario: usuarioActualizado });
           }
         );
-      }
+      
     } else {
       Usuario.findByIdAndUpdate(
         req.user.sub,
@@ -203,30 +197,48 @@ function EliminarEmpresas(req, res) {
 }
 
 function VerEmpresas(req, res) {
-  Usuario.find({}, (err, UsuarioEncontrado) => {
-    return res.status(200).send({ Empresas: UsuarioEncontrado });
+  Usuario.findOne({ _id: req.user.rol }, (err, usuarioEncontrado) => {
+    if (req.user.rol == "ROL_ADMIN") {
+      Usuario.find({rol: 'ROL_EMPRESA'}, (err, UsuarioEncontrado) => {
+        return res.status(200).send({ Empresas: UsuarioEncontrado });
+      });
+    } else {
+      Usuario.find({ _id: req.user.rol }, (err, UsuarioEncontrado) => {
+        return res.status(200).send({ mensaje: UsuarioEncontrado });
+      });
+    }
   });
 }
 
 function EmpresaId(req, res) {
   const idUser = req.params.idUser;
 
-  Usuario.findById(
-    { _id: idUser, idEmpresa: req.user.sub },
-    (err, EmpresaEncontrada) => {
-      if (EmpresaEncontrada.id == req.user.sub) {
-        if (err)
-          return res.status(404).send({ mensaje: "Empresa no encontrado" });
-        if (!EmpresaEncontrada)
-          return res.status(404).send({ mensaje: "Empresa no encontrado" });
-        return res.status(200).send({ Empresa: EmpresaEncontrada });
-      } else {
-        return res
-          .status(500)
-          .send({ Mensaje: "No puedes ver otras empresas" });
+  if (req.user.rol == "ROL_EMPRESA") {
+    Usuario.findById(
+      { _id: idUser, idEmpresa: req.user.sub },
+      (err, EmpresaEncontrada) => {
+        if (EmpresaEncontrada.id == req.user.sub) {
+          if (err)
+            return res.status(404).send({ mensaje: "Empresa no encontrado" });
+          if (!EmpresaEncontrada)
+            return res.status(404).send({ mensaje: "Empresa no encontrado" });
+          return res.status(200).send({ Empresa: EmpresaEncontrada });
+        } else {
+          return res
+            .status(500)
+            .send({ Mensaje: "No puedes ver otras empresas" });
+        }
       }
-    }
-  );
+    );
+  } else {
+    Usuario.findById({ _id: idUser }, (err, EmpresaEncontrada) => {
+      if (err)
+        return res.status(404).send({ mensaje: "Empresa no encontrado" });
+      if (!EmpresaEncontrada)
+        return res.status(404).send({ mensaje: "Empresa no encontrado" });
+      return res.status(200).send({ Empresa: EmpresaEncontrada });
+    });
+  }
 }
 
 //Productos
